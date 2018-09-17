@@ -30,8 +30,37 @@ get_header(); ?>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
+			<table>
+				<tr>
+					<th>Tên sản phẩm</th>
+					<th>Hình ảnh sản phẩm</th>
+					<th>Giá sản phẩm</th>
+					<th>Giá đã giảm</th>
+					<th>Phần trăm giảm giá</th>
+				</tr>
+					
+			
+				<?php
+				    global $wpdb;
 
-			<?php
+				    $results = $wpdb->get_results ( "SELECT * FROM products" );
+
+				    foreach ( $results as $product )   {
+				    ?>
+
+				    <tr>
+				    	<td><?php echo $product->name_product;?></td>
+				    	<td><a href="<?php echo $product->link_product;?>"><img src="<?php echo $product->image_product;?>"></a></td>
+				    	<td><?php echo $product->original_price;?></td>
+				    	<td><?php echo $product->price;?></td>
+				    	<td><?php echo $product->percent;?></td>
+					</tr>
+				    <?php }
+				  ?> 
+	 
+
+			</table>
+			<!-- <?php
 			if ( have_posts() ) :
 
 				/* Start the Loop */
@@ -57,7 +86,7 @@ get_header(); ?>
 				get_template_part( 'template-parts/post/content', 'none' );
 
 			endif;
-			?>
+			?> -->
 
 		</main><!-- #main -->
 	</div><!-- #primary -->
