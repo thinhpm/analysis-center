@@ -17,6 +17,23 @@
 
 get_header(); ?>
 
+<div class="curl">
+	<?php 
+		
+
+		$data = file_get_contents('https://www.lazada.vn/products/ao-thun-tay-dai-phoi-tui-thoi-trang-d118-tran-doanh-i143281453-s148107021.html?search=1');
+
+		preg_match("/<div id=\"module_product_price_1\"(.+?)<div id=\"module_promotion_tags\"/", $data, $output_array);
+
+		$html = str_replace("<div id=\"module_promotion_tags\"", '', $output_array[0]);
+
+		$doc = new DOMDocument();
+		$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
+		echo $doc->saveHTML();
+
+	 ?>
+</div>
+
 <div class="wrap">
 	<?php if ( is_home() && ! is_front_page() ) : ?>
 		<header class="page-header">
