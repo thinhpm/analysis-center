@@ -1,0 +1,96 @@
+.site-header {
+	background: #d9edf7;
+}
+.site-header .container{
+	display: table;
+}
+#logo {
+	margin: 0;
+	width: 30%;
+	display: table-cell;
+	text-align: center;
+}
+#logo img {
+	width: 100px;
+	height: 100px;
+}
+.menu-top {
+	width: 70%;
+	display: table-cell;
+	vertical-align: middle;
+}
+.menu-top ul li a {
+	padding: 10px;
+	font-size: 16px;
+	line-height: normal;
+}
+.container {
+	width: 1020px;
+	margin: 0 auto;
+}
+.product-list .item {
+	border: 1px solid #ccc;
+	min-height: 380px;
+	margin-bottom: 15px;
+	position: relative;
+}
+.images-product img {
+	width: 100%;
+	height: 260px;
+}
+.images-product {
+	min-height: 260px;
+	border-bottom: 1px solid #ccc;
+}
+.title-product {
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+	padding: 5px;
+}
+.title-product a{
+	font-size: 16px;
+	line-height: normal;
+	color: #000;
+	text-decoration: none;
+}
+.title-product a:hover {
+	color: red;
+}
+.price-product {
+	width: 100%;
+	float: left;
+}
+.price,.original-price {
+	width: 50%;
+	float: left;
+	text-align: center;
+	border: 1px solid #ccc;
+	padding: 5px;
+	border-top: none;
+}
+.percent {
+	padding: 10px;
+	background: red;
+	color: #fff;
+	border-radius: 50%;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
