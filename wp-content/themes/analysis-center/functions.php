@@ -176,3 +176,81 @@ if (!function_exists('logo')) {
 		echo '<h1 id="logo"><a href="'.home_url().'"><img src="'.$tp_options['logo-image']['url'].'" alt="'.get_bloginfo().'" /></a></h1>';
 	}
 }
+
+add_action('wp_ajax_filter_filter_category', 'filter_category');
+add_action('wp_ajax_nopriv_filter_category', 'filter_category');
+
+function filter_category() {
+	print ("hello");
+	die();
+	// $categoryName = $_GET('name_category');
+	// $percent = $_GET('percent');
+
+	// ini_set('max_execution_time', 300);
+	// $arrResult = [];
+	// $stt = 1;
+	// $numPage = 10;
+
+	// while(true) {
+	// 	$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
+	// 	preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
+		
+	// 	if(count($output_array[0]) == 0 || $stt == $numPage){
+	// 		break;
+	// 	}
+
+	// 	foreach($output_array[0] as $value){
+	// 		$discount = getValueOf($value, 'discount');
+	// 		$discount = str_replace('-', '', $discount);
+	// 		$discount = str_replace('%', '', $discount);
+
+	// 		if ($discount >= $percent) {
+	// 			$name = getValueOf($value, 'name');
+	// 			$linkProduct = 'https:' . getValueOf($value, 'productUrl');
+	// 			$imageProduct = getValueOf($value, 'image');
+	// 		    $originalPrice = getValueOf($value, 'originalPrice');
+	// 		    $originalPrice = str_replace('.00', '', $originalPrice);
+	// 		    $price = getValueOf($value, 'price');
+	// 		    $lastUpdate = date("Y-m-d H:i:s");
+	// 		    $price = str_replace('.00', '', $price);
+
+	// 			array_push($arrResult, $discount);
+
+
+	// 			echo '<div class="col-md-3">';
+	// 			echo '	<div class="item">';
+	// 			echo '		<div class="images-product">';
+	// 			echo '			<a href="'. $linkProduct .'"><img src="'. $imageProduct .'"></a>';
+	// 			echo '		</div>';
+	// 			echo '		<h4 class="title-product">';
+	// 			echo '		<a href="'. $linkProduct .'">'. $name .'</a>';
+	// 			echo '		</h4>';
+	// 			echo '		<div class="price-product">';
+	// 			echo '			<div class="original-price">'. $originalPrice .'</div>';
+	// 			echo '			<div class="price">'. $price .'</td></div>';
+	// 			echo '		</div>';
+	// 			echo '		<div class="percent">-'. $discount .'%</div>';
+	// 			echo '		<div class="last-update">'. $lastUpdate .'</div>';
+	// 			echo '	</div>';
+	// 			echo '</div>';
+
+	// 		}
+	// 	}
+
+	// 	$stt++;
+	// }
+
+}
+
+function getValueOf($stringText, $name) {
+    $index1 = strpos( $stringText, "\"" . $name . "\":\"");
+
+    if ($index1 === false) {
+    	return 0;
+    }
+
+    $stringText = substr($stringText, $index1 + strlen("\"" . $name . "\":\""));
+    $index2 = strpos($stringText, '"');
+
+    return substr($stringText, 0, $index2);
+}

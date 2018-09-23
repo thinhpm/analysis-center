@@ -19,12 +19,61 @@
  */
 
 get_header();
+	// $categoryName = 'phu-kien-dien-thoai-may-tinh-bang';
+	// $percent = 50;
+	// filter_category($categoryName, $percent);
 ?>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		    $('.call-ajax').click(function(){ // Khi click vào button thì sẽ gọi hàm ajax
+		        $.ajax({ // Hàm ajax
+		           type : "post", //Phương thức truyền post hoặc get
+		           dataType : "json", //Dạng dữ liệu trả về xml, json, script, or html
+		           url : '<?php echo admin_url('admin-ajax.php');?>', // Nơi xử lý dữ liệu
+		           data : {
+		                action: "filter_category", //Tên action, dữ liệu gởi lên cho server
+		                name_category: 'phu-kien-dien-thoai-may-tinh-bang',
+		                percent: '10'
+		           },
+		           beforeSend: function(){
+		               $('.product-list .row').html('');
+		           },
+		           success: function(response) {
+		               $('.product-list .row').html(response);
+		           },
+		           error: function( jqXHR, textStatus, errorThrown ){
+		                console.log( 'The following error occured: ' + textStatus, errorThrown );
+		           }
+		       });
+		    });
+		});
+
+	</script>
+	
+
+
+<!-- 	<div class="curl">
+		<?php 
+			
+
+			$data = file_get_contents('https://www.lazada.vn/products/ao-thun-tay-dai-phoi-tui-thoi-trang-d118-tran-doanh-i143281453-s148107021.html?search=1');
+
+			preg_match("/<div id=\"module_product_price_1\"(.+?)<div id=\"module_promotion_tags\"/", $data, $output_array);
+
+			$html = str_replace("<div id=\"module_promotion_tags\"", '', $output_array[0]);
+
+			$doc = new DOMDocument();
+			$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
+			echo $doc->saveHTML();
+
+		 ?>
+	</div> -->
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<div class="container">
-
+				<button class='call-ajax'>filter</button>
 				<h2>Chọn khoảng giảm giá theo. %</h2>
 				  <form>
 				    <div class="checkbox">
@@ -40,6 +89,7 @@ get_header();
 				  viết cái phần trăm vào đây
 				<div class="product-list">
 					<div class="row">
+
 					<?php
 					    global $wpdb;
 
@@ -61,6 +111,7 @@ get_header();
 									<div class="price"><?php echo $product->price;?></td></div>
 								</div>
 								<div class="percent"><?php echo $product->percent;?>%</div>
+								<div class="last-update"><?php echo $product->last_update;?></div>';
 							</div>
 						</div>
 					 <?php }
