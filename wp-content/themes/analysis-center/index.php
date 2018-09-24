@@ -19,33 +19,55 @@
  */
 
 get_header();
-	// $categoryName = 'phu-kien-dien-thoai-may-tinh-bang';
-	// $percent = 50;
-	// filter_category($categoryName, $percent);
+
 ?>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-		    $('.call-ajax').click(function(){ // Khi click vào button thì sẽ gọi hàm ajax
-		        $.ajax({ // Hàm ajax
-		           type : "post", //Phương thức truyền post hoặc get
-		           dataType : "json", //Dạng dữ liệu trả về xml, json, script, or html
-		           url : '<?php echo admin_url('admin-ajax.php');?>', // Nơi xử lý dữ liệu
-		           data : {
-		                action: "filter_category", //Tên action, dữ liệu gởi lên cho server
-		                name_category: 'phu-kien-dien-thoai-may-tinh-bang',
-		                percent: '10'
-		           },
-		           beforeSend: function(){
-		               $('.product-list .row').html('');
-		           },
-		           success: function(response) {
-		               $('.product-list .row').html(response);
-		           },
-		           error: function( jqXHR, textStatus, errorThrown ){
+		    $('.call-filter-category').click(function(){
+		        var name_category = $('#list-category :selected').attr('data-name');
+		        var percent = $('#list-percent :selected').attr('data');
+
+		        $.ajax({
+		           	type : "get",
+		           	dataType : "json", 
+		           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+		           	data : {
+		                action: "filter_category", 
+		                name_category: name_category,
+		                percent: percent
+		           	},
+		           	beforeSend: function(){
+		               	$('.product-list .row').html('');
+		           	},
+		           	success: function(response) {
+		               	$('.product-list .row').html(response['result']);
+
+		               	// save to database
+		               	$.ajax({
+				           	type : "post",
+				           	dataType : "json",
+				           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+				           	data : {
+				                action: "filter_category_save_db",
+				                arrayData: response['arrayData']
+				           	},
+				           	beforeSend: function(){
+				           		
+				           	},
+				           	success: function(response) {
+				           		console.log('done update data!');
+				           	},
+				           	error: function( jqXHR, textStatus, errorThrown ){
+				                console.log( 'The following error occured: ' + textStatus, errorThrown );
+				           	}
+				       });
+
+		           	},
+		           	error: function( jqXHR, textStatus, errorThrown ){
 		                console.log( 'The following error occured: ' + textStatus, errorThrown );
-		           }
-		       });
+		           	}
+		       	});
 		    });
 		});
 
@@ -70,10 +92,25 @@ get_header();
 		 ?>
 	</div> -->
 
+
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<div class="container">
-				<button class='call-ajax'>filter</button>
+				<h2>Lọc theo danh mục sản phẩm</h2>
+				<select id='list-category'>
+					<option data-name='dien-thoai-di-dong'>Điện thoại di động</option>
+					<option data-name='thiet-bi-mang'>Thiết bị mạng</option>
+					<option data-name='do-ngu-noi-y'>Đồ ngủ nội y</option>
+				</select>
+				<select id='list-percent'>
+					<option data='90'>>=90%</option>
+					<option data='80'>>=80%</option>
+					<option data='70'>>=70%</option>
+					<option data='30'>>=30%</option>
+				</select>
+				<button class='call-filter-category'>Lọc</button>
+			</div>
+			<div class="container">
 				<h2>Chọn khoảng giảm giá theo. %</h2>
 				  <form>
 				    <div class="checkbox">
@@ -94,6 +131,7 @@ get_header();
 					    global $wpdb;
 
 					    $results = $wpdb->get_results ( "SELECT * FROM products" );
+
 
 					    foreach ( $results as $product )   {
 					    ?>
