@@ -169,10 +169,135 @@ require get_template_directory() . '/core/init.php';
  * add shortcode
  */
 require get_template_directory() . '/inc/shortcode.php';
+
 //Add logo
 if (!function_exists('logo')) {
 	function get_logo() {
 		global $tp_options;
 		echo '<h1 id="logo"><a href="'.home_url().'"><img src="'.$tp_options['logo-image']['url'].'" alt="'.get_bloginfo().'" /></a></h1>';
 	}
+}
+
+add_action('wp_ajax_filter_filter_category', 'filter_category');
+add_action('wp_ajax_nopriv_filter_category', 'filter_category');
+
+function filter_category() {
+
+	$result = '';
+	$categoryName = $_GET['name_category'];
+	$percent = $_GET['percent'];
+
+	ini_set('max_execution_time', 300);
+	$mainResult = [];
+
+	$stt = 1;
+	$numPage = 20;
+
+	while(true) {
+		$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
+		preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
+
+		if(count($output_array[0]) == 0 || $stt == $numPage){
+			break;
+		}
+
+		foreach($output_array[0] as $value){
+			$arrResult = [];
+			$discount = getValueOf($value, 'discount');
+			$discount = str_replace('-', '', $discount);
+			$discount = str_replace('%', '', $discount);
+
+			if ($discount >= $percent) {
+				$name = getValueOf($value, 'name');
+				$id_product = getValueOf($value, 'itemId');
+				$linkProduct = 'https:' . getValueOf($value, 'productUrl');
+				$imageProduct = getValueOf($value, 'image');
+			    $originalPrice = getValueOf($value, 'originalPrice');
+			    $originalPrice = str_replace('.00', '', $originalPrice);
+			    $originalPrice = str_replace('.0', '', $originalPrice);
+			    $price = getValueOf($value, 'price');
+			    $lastUpdate = date("Y-m-d H:i:s");
+			    $price = str_replace('.00', '', $price);
+
+				$arrResult['id_product'] = $id_product;
+				$arrResult['name'] = $name;
+				$arrResult['linkProduct'] = $linkProduct;
+				$arrResult['imageProduct'] = $imageProduct;
+				$arrResult['originalPrice'] = $originalPrice;
+				$arrResult['price'] = $price;
+				$arrResult['discount'] = $discount;
+				$arrResult['last_update'] = $lastUpdate;
+				$arrResult['name_category'] = $categoryName;
+
+				array_push($mainResult, $arrResult);
+
+				$result .= '<div class="col-md-3">';
+				$result .= '	<div class="item">';
+				$result .= '		<div class="images-product">';
+				$result .= '			<a href="'. $linkProduct .'"><img src="'. $imageProduct .'"></a>';
+				$result .= '		</div>';
+				$result .= '		<h4 class="title-product">';
+				$result .= '		<a href="'. $linkProduct .'">'. $name .'</a>';
+				$result .= '		</h4>';
+				$result .= '		<div class="price-product">';
+				$result .= '			<div class="original-price">'. $originalPrice .'</div>';
+				$result .= '			<div class="price">'. $price .'</td></div>';
+				$result .= '		</div>';
+				$result .= '		<div class="percent">-'. $discount .'%</div>';
+				$result .= '		<div class="last-update">'. $lastUpdate .'</div>';
+				$result .= '	</div>';
+				$result .= '</div>';
+
+			}
+		}
+
+		$stt++;
+	}
+	echo json_encode(['result'=> $result, 'arrayData' => $mainResult]);
+
+	die();
+
+}
+
+function getValueOf($stringText, $name) {
+    $index1 = strpos( $stringText, "\"" . $name . "\":\"");
+
+    if ($index1 === false) {
+    	return 0;
+    }
+
+    $stringText = substr($stringText, $index1 + strlen("\"" . $name . "\":\""));
+    $index2 = strpos($stringText, '"');
+
+    return substr($stringText, 0, $index2);
+}
+
+add_action('wp_ajax_filter_category_save_db', 'filter_category_save_db');
+add_action('wp_ajax_nopriv_filter_category_save_db', 'filter_category_save_db');
+
+function filter_category_save_db() {
+	global $wpdb;
+
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products" );
+	$arrayData = $_POST['arrayData'];
+
+	if (empty($arrayData)) {
+		return;
+	}
+
+	foreach ($arrProductId as $key => $value) {
+		$arrProductId[$key] = $value->id_product;
+	}
+
+	foreach ($arrayData as $key => $value) {
+		if (in_array($value['id_product'], $arrProductId)) {
+			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
+		} else {
+			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] ."')" );			
+		}
+	}
+
+	print_r('done');
+
+	die();
 }

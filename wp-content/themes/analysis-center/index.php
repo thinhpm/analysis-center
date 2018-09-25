@@ -19,12 +19,98 @@
  */
 
 get_header();
+
 ?>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+		    $('.call-filter-category').click(function(){
+		        var name_category = $('#list-category :selected').attr('data-name');
+		        var percent = $('#list-percent :selected').attr('data');
+
+		        $.ajax({
+		           	type : "get",
+		           	dataType : "json", 
+		           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+		           	data : {
+		                action: "filter_category", 
+		                name_category: name_category,
+		                percent: percent
+		           	},
+		           	beforeSend: function(){
+		               	$('.product-list .row').html('');
+		           	},
+		           	success: function(response) {
+		               	$('.product-list .row').html(response['result']);
+
+		               	// save to database
+		               	$.ajax({
+				           	type : "post",
+				           	dataType : "json",
+				           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+				           	data : {
+				                action: "filter_category_save_db",
+				                arrayData: response['arrayData']
+				           	},
+				           	beforeSend: function(){
+				           		
+				           	},
+				           	success: function(response) {
+				           		console.log('done update data!');
+				           	},
+				           	error: function( jqXHR, textStatus, errorThrown ){
+				                console.log( 'The following error occured: ' + textStatus, errorThrown );
+				           	}
+				       });
+
+		           	},
+		           	error: function( jqXHR, textStatus, errorThrown ){
+		                console.log( 'The following error occured: ' + textStatus, errorThrown );
+		           	}
+		       	});
+		    });
+		});
+
+	</script>
+	
+
+
+<!-- 	<div class="curl">
+		<?php 
+			
+
+			$data = file_get_contents('https://www.lazada.vn/products/ao-thun-tay-dai-phoi-tui-thoi-trang-d118-tran-doanh-i143281453-s148107021.html?search=1');
+
+			preg_match("/<div id=\"module_product_price_1\"(.+?)<div id=\"module_promotion_tags\"/", $data, $output_array);
+
+			$html = str_replace("<div id=\"module_promotion_tags\"", '', $output_array[0]);
+
+			$doc = new DOMDocument();
+			$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
+			echo $doc->saveHTML();
+
+		 ?>
+	</div> -->
+
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<div class="container">
-
+				<h2>Lọc theo danh mục sản phẩm</h2>
+				<select id='list-category'>
+					<option data-name='dien-thoai-di-dong'>Điện thoại di động</option>
+					<option data-name='thiet-bi-mang'>Thiết bị mạng</option>
+					<option data-name='do-ngu-noi-y'>Đồ ngủ nội y</option>
+				</select>
+				<select id='list-percent'>
+					<option data='90'>>=90%</option>
+					<option data='80'>>=80%</option>
+					<option data='70'>>=70%</option>
+					<option data='30'>>=30%</option>
+				</select>
+				<button class='call-filter-category'>Lọc</button>
+			</div>
+			<div class="container">
 				<h2>Chọn khoảng giảm giá theo. %</h2>
 				  <form>
 				    <div class="checkbox">
@@ -40,10 +126,12 @@ get_header();
 				  viết cái phần trăm vào đây
 				<div class="product-list">
 					<div class="row">
+
 					<?php
 					    global $wpdb;
 
 					    $results = $wpdb->get_results ( "SELECT * FROM products" );
+
 
 					    foreach ( $results as $product )   {
 					    ?>
@@ -61,6 +149,7 @@ get_header();
 									<div class="price"><?php echo $product->price;?></td></div>
 								</div>
 								<div class="percent"><?php echo $product->percent;?>%</div>
+								<div class="last-update"><?php echo $product->last_update;?></div>';
 							</div>
 						</div>
 					 <?php }
