@@ -20,6 +20,8 @@
 
 get_header();
 
+global $wpdb;
+
 ?>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
@@ -39,8 +41,13 @@ get_header();
 		           	},
 		           	beforeSend: function(){
 		               	$('.product-list .row').html('');
+		               	$(".loading").css("display", "block");
 		           	},
 		           	success: function(response) {
+		           		$(".loading").css("display", "none");
+		           		if(response['result'] == ''){
+		           			alert("Không tìm thấy sản phẩm nào");
+		           		}
 		               	$('.product-list .row').html(response['result']);
 
 		               	// save to database
@@ -72,41 +79,31 @@ get_header();
 		});
 
 	</script>
-	
-
-
-<!-- 	<div class="curl">
-		<?php 
-			
-
-			$data = file_get_contents('https://www.lazada.vn/products/ao-thun-tay-dai-phoi-tui-thoi-trang-d118-tran-doanh-i143281453-s148107021.html?search=1');
-
-			preg_match("/<div id=\"module_product_price_1\"(.+?)<div id=\"module_promotion_tags\"/", $data, $output_array);
-
-			$html = str_replace("<div id=\"module_promotion_tags\"", '', $output_array[0]);
-
-			$doc = new DOMDocument();
-			$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
-			echo $doc->saveHTML();
-
-		 ?>
-	</div> -->
-
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<div class="container">
 				<h2>Lọc theo danh mục sản phẩm</h2>
+				<?php 
+					$categories = $wpdb->get_results ("SELECT * FROM categories");
+				 ?>
 				<select id='list-category'>
-					<option data-name='dien-thoai-di-dong'>Điện thoại di động</option>
-					<option data-name='thiet-bi-mang'>Thiết bị mạng</option>
-					<option data-name='do-ngu-noi-y'>Đồ ngủ nội y</option>
+					<?php 
+						foreach ($categories as $value) {
+							echo "<option data-name='". $value->id_category ."'>". $value->name_category ."</option>";
+						}
+					 ?>
 				</select>
 				<select id='list-percent'>
-					<option data='90'>>=90%</option>
-					<option data='80'>>=80%</option>
-					<option data='70'>>=70%</option>
-					<option data='30'>>=30%</option>
+					<option data='90'> >= 90%</option>
+					<option data='80'> >= 80%</option>
+					<option data='70'> >= 70%</option>
+					<option data='60'> >= 60%</option>
+					<option data='50'> >= 50%</option>
+					<option data='40'> >= 40%</option>
+					<option data='30'> >= 30%</option>
+					<option data='20'> >= 20%</option>
+					<option data='10'> >= 10%</option>
 				</select>
 				<button class='call-filter-category'>Lọc</button>
 			</div>
@@ -128,9 +125,7 @@ get_header();
 					<div class="row">
 
 					<?php
-					    global $wpdb;
-
-					    $results = $wpdb->get_results ( "SELECT * FROM products" );
+					    $results = $wpdb->get_results ( "SELECT * FROM products ORDER BY `percent` DESC LIMIT 50" );
 
 
 					    foreach ( $results as $product )   {
@@ -191,6 +186,50 @@ get_header();
 			</div>
 		</main><!-- #main -->
 	</div><!-- #primary -->
+
+	<div class="loading">
+		<div class="wap-loader">
+			<div class="loader"></div>
+		</div>
+	</div>
+	
+	
+	<style>
+		.loading {
+			display: none;
+			position: fixed;
+		    top: 0;
+		    bottom: 0;
+		    right: 0;
+		    left: 0;
+		    background: rgba(255, 255, 255, 0.6);
+		}
+		.wap-loader {
+			position: absolute;
+			top: calc(50% - 60px);
+			left: calc(50% - 60px);
+		}
+		.loader {
+		  border: 16px solid #f3f3f3;
+		  border-radius: 50%;
+		  border-top: 16px solid #3498db;
+		  width: 120px;
+		  height: 120px;
+		  -webkit-animation: spin 2s linear infinite; /* Safari */
+		  animation: spin 2s linear infinite;
+		}
+
+		/* Safari */
+		@-webkit-keyframes spin {
+		  0% { -webkit-transform: rotate(0deg); }
+		  100% { -webkit-transform: rotate(360deg); }
+		}
+
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+	</style>
 
 <?php
 get_footer();
