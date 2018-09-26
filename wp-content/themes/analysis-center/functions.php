@@ -113,6 +113,42 @@ function analysis_center_widgets_init() {
 		'before_title'  => '<h2 class="widget-title">',
 		'after_title'   => '</h2>',
 	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer1', 'analysis-center' ),
+		'id'            => 'footer-1',
+		'description'   => esc_html__( 'Add widgets here.', 'analysis-center' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer2', 'analysis-center' ),
+		'id'            => 'footer-2',
+		'description'   => esc_html__( 'Add widgets here.', 'analysis-center' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer3', 'analysis-center' ),
+		'id'            => 'footer-3',
+		'description'   => esc_html__( 'Add widgets here.', 'analysis-center' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+	register_sidebar( array(
+		'name'          => esc_html__( 'Footer4', 'analysis-center' ),
+		'id'            => 'footer-4',
+		'description'   => esc_html__( 'Add widgets here.', 'analysis-center' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
 }
 add_action( 'widgets_init', 'analysis_center_widgets_init' );
 
@@ -128,7 +164,7 @@ function analysis_center_scripts() {
 	wp_enqueue_script( 'analysis-center-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
 
 	wp_enqueue_script( 'analysis-center-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
-	// wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js', false, '3.3.1');
+	
 	wp_enqueue_script( 'main.js', get_template_directory_uri() . '/js/main.js', array('jquery'),'1.0', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
@@ -165,10 +201,6 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 }
 
 require get_template_directory() . '/core/init.php';
-/**
- * add shortcode
- */
-require get_template_directory() . '/inc/shortcode.php';
 
 //Add logo
 if (!function_exists('logo')) {
@@ -312,4 +344,35 @@ function filter_product() {
 	$doc = new DOMDocument();
 	$doc->loadHTML('<?xml encoding="UTF-8">' . $html);
 	echo $doc->saveHTML();
+}
+
+// get post new
+add_shortcode('get_post_new','get_post_new');
+function get_post_new($atts, $content = null){
+    $wp_query = new WP_Query(array(
+        'post_type'      => 'post',
+        'order'          => 'desc',
+        'orderby'        => 'date',
+        'post_status'    => 'publish',
+        'posts_per_page'  => 12,
+        ));
+    ob_start();
+    if( $wp_query->have_posts() ):
+    echo '<div class="post_new">';
+    while( $wp_query->have_posts() ): $wp_query->the_post();
+    ?> 
+    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+        <?php the_post_thumbnail(); ?>
+    </a>
+        <h4> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+        <p class="excerpt"><?php echo wp_trim_words(get_the_content(),100,'...'); ?></p>
+        <a rel="nofollow" target="_blank" href="<?php the_permalink(); ?>">Continue Reading</a>
+    <?php
+    endwhile;
+    wp_reset_query();
+    echo '</div>';
+    endif;
+    $list_post = ob_get_contents();
+    ob_end_clean();
+    return $list_post;
 }

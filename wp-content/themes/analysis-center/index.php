@@ -83,44 +83,34 @@ global $wpdb;
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main">
 			<div class="container">
-				<h2>Lọc theo danh mục sản phẩm</h2>
-				<?php 
-					$categories = $wpdb->get_results ("SELECT * FROM categories");
-				 ?>
-				<select id='list-category'>
+				<div class="search-list">
+					<h2>Lọc Nâng Cao Theo Danh Mục Sản Phẩm</h2>
 					<?php 
-						foreach ($categories as $value) {
-							echo "<option data-name='". $value->id_category ."'>". $value->name_category ."</option>";
-						}
+						$categories = $wpdb->get_results ("SELECT * FROM categories");
 					 ?>
-				</select>
-				<select id='list-percent'>
-					<option data='90'> >= 90%</option>
-					<option data='80'> >= 80%</option>
-					<option data='70'> >= 70%</option>
-					<option data='60'> >= 60%</option>
-					<option data='50'> >= 50%</option>
-					<option data='40'> >= 40%</option>
-					<option data='30'> >= 30%</option>
-					<option data='20'> >= 20%</option>
-					<option data='10'> >= 10%</option>
-				</select>
-				<button class='call-filter-category'>Lọc</button>
+					<select id='list-category'>
+						<?php 
+							foreach ($categories as $value) {
+								echo "<option data-name='". $value->id_category ."'>". $value->name_category ."</option>";
+							}
+						 ?>
+					</select>
+					<select id='list-percent'>
+						<option data='90'> >= 90%</option>
+						<option data='80'> >= 80%</option>
+						<option data='70'> >= 70%</option>
+						<option data='60'> >= 60%</option>
+						<option data='50'> >= 50%</option>
+						<option data='40'> >= 40%</option>
+						<option data='30'> >= 30%</option>
+						<option data='20'> >= 20%</option>
+						<option data='10'> >= 10%</option>
+					</select>
+					<button class='call-filter-category'>Lọc</button>
+				</div>
 			</div>
 			<div class="container">
-				<h2>Chọn khoảng giảm giá theo. %</h2>
-				  <form>
-				    <div class="checkbox">
-				      <label><input type="checkbox" value="">80%</label>
-				    </div>
-				    <div class="checkbox">
-				      <label><input type="checkbox" value="">85%</label>
-				    </div>
-				    <div class="checkbox">
-				      <label><input type="checkbox" value="">90%</label>
-				    </div>
-				  </form>
-				  viết cái phần trăm vào đây
+				<h2>Các Sản Phẩm Giảm giá nhiều nhất trong 1h qua</h2>
 				<div class="product-list">
 					<div class="row">
 
@@ -140,49 +130,17 @@ global $wpdb;
 									<a href="<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
 								</h4>
 								<div class="price-product">
-									<div class="original-price"><?php echo $product->original_price;?></div>
-									<div class="price"><?php echo $product->price;?></td></div>
+									<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+									<div class="price"><?php echo $product->price;?> Đ</td></div>
 								</div>
 								<div class="percent"><?php echo $product->percent;?>%</div>
-								<div class="last-update"><?php echo $product->last_update;?></div>';
+								<div class="last-update"><?php echo $product->last_update ;?></div>
 							</div>
 						</div>
 					 <?php }
 					  ?> 
 					</div>
 				</div>
-			<!-- <?php
-			if ( have_posts() ) :
-
-				if ( is_home() && ! is_front_page() ) :
-					?>
-					<header>
-						<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-					</header>
-					<?php
-				endif;
-
-				/* Start the Loop */
-				while ( have_posts() ) :
-					the_post();
-
-					/*
-					 * Include the Post-Type-specific template for the content.
-					 * If you want to override this in a child theme, then include a file
-					 * called content-___.php (where ___ is the Post Type name) and that will be used instead.
-					 */
-					get_template_part( 'template-parts/content', get_post_type() );
-
-				endwhile;
-
-				the_posts_navigation();
-
-			else :
-
-				get_template_part( 'template-parts/content', 'none' );
-
-			endif;
-			?> -->
 			</div>
 		</main><!-- #main -->
 	</div><!-- #primary -->
@@ -192,44 +150,7 @@ global $wpdb;
 			<div class="loader"></div>
 		</div>
 	</div>
-	
-	
-	<style>
-		.loading {
-			display: none;
-			position: fixed;
-		    top: 0;
-		    bottom: 0;
-		    right: 0;
-		    left: 0;
-		    background: rgba(255, 255, 255, 0.6);
-		}
-		.wap-loader {
-			position: absolute;
-			top: calc(50% - 60px);
-			left: calc(50% - 60px);
-		}
-		.loader {
-		  border: 16px solid #f3f3f3;
-		  border-radius: 50%;
-		  border-top: 16px solid #3498db;
-		  width: 120px;
-		  height: 120px;
-		  -webkit-animation: spin 2s linear infinite; /* Safari */
-		  animation: spin 2s linear infinite;
-		}
 
-		/* Safari */
-		@-webkit-keyframes spin {
-		  0% { -webkit-transform: rotate(0deg); }
-		  100% { -webkit-transform: rotate(360deg); }
-		}
-
-		@keyframes spin {
-		  0% { transform: rotate(0deg); }
-		  100% { transform: rotate(360deg); }
-		}
-	</style>
 
 <?php
 get_footer();
