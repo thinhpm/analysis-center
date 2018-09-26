@@ -358,15 +358,15 @@ function get_post_new($atts, $content = null){
         ));
     ob_start();
     if( $wp_query->have_posts() ):
-    echo '<div class="post_new">';
+    echo '<div class="post-new">';
     while( $wp_query->have_posts() ): $wp_query->the_post();
     ?> 
-    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-        <?php the_post_thumbnail(); ?>
-    </a>
-        <h4> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-        <p class="excerpt"><?php echo wp_trim_words(get_the_content(),100,'...'); ?></p>
-        <a rel="nofollow" target="_blank" href="<?php the_permalink(); ?>">Continue Reading</a>
+    <div class="item-post">
+    	<a class="images-post"> href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+	        <?php the_post_thumbnail(); ?>
+	    </a>
+     <h4> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+    </div>
     <?php
     endwhile;
     wp_reset_query();

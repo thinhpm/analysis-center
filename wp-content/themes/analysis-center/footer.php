@@ -17,13 +17,16 @@
 		<div class="site-info">
 			<div class="container">
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-3 footer-logo">
+						<?php get_logo(); ?>
+					</div>
+					<div class="col-md-3">
 						<h3>Giới Thiệu</h3>
 						<p>
-							Đây là. trang web so sánh đưa ra kết quả những sản phẩm lỗi giá. sản phẩm giảm giá mạnh trên lazada
+							<a href="mgghot.com">Mgghot.com</a> là một website chuyên về cập nhật mã giảm giá và các chương trình khuyến mãi của các website thương mại và dich vụ một cách nhanh và chính xác nhất hiện nay, với rất nhiều tin khuyến mãi giảm giá phong phú chắc chắn đáp ứng nhu cầu người dùng thoải mái lựa chọn để mua sắm được tiết kiệm nhất.
 						</p>
 					</div>			
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<h3>Menu</h3>
 						<div class="menu-footer">
 							<?php
@@ -34,20 +37,23 @@
 				?>
 						</div>
 					</div>			
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<h3>Liên Kết</h3>
 						<ul>
 							<li>
-								<a href="">Tiki</a>
+								<a href="https://shorten.asia/sDkqc8Mb">Tiki</a>
 							</li>
 							<li>
 								<a href="">Lazada</a>
 							</li>
 							<li>
-								<a href="">Shopee</a>
+								<a href="https://shorten.asia/kYKAJ6yh">Shopee</a>
 							</li>
 							<li>
 								<a href="">Adayroi</a>
+							</li>
+							<li>
+								<a href="https://shorten.asia/Xg8MNySh">Sendo</a>
 							</li>
 						</ul>
 					</div>			
@@ -57,7 +63,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-xs-12 col-sm-9">
-							<p>© 2018 - present Mgghot.com All Rights Reserved</p>
+							<p>© 2018 - present <a href="mgghot.com">Mgghot.com</a> All Rights Reserved</p>
 							<ul class="inline-list">
 								<li class="inline-list_item">
 									<a href="" class="inline-list_link is-white">Điều khoản</a>
@@ -72,11 +78,11 @@
 						<div class="col-xs-12 col-sm-3">
 							<ul class="social-list align-right">
 								<li class="social-list_item">
-									<a target="_blank" rel="noopener" href="" class="social-list_link is-facebook" aria-label="facebook">
+									<a target="_blank" rel="noopener" href="https://www.facebook.com/groups/1895929324003794" class="social-list_link is-facebook" aria-label="facebook">
 										<i class="fa fa-facebook"></i>
 									</a>
 								</li>
-								<li class="social-list_item">
+								<!-- <li class="social-list_item">
 									<a target="_blank" rel="noopener" href="" class="social-list_link is-twitter" aria-label="twitter">
 										<i class="fa fa-twitter"></i>
 									</a>
@@ -84,7 +90,7 @@
 								<li class="social-list_item">
 									<a target="_blank" rel="noopener" href="" class="social-list_link is-google" aria-label="google"><i class="fa fa-google"></i>
 									</a>
-								</li>
+								</li> -->
 							</ul>
 						</div>
 					</div>

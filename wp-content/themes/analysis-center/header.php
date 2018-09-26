@@ -22,7 +22,27 @@
 
 <body <?php body_class(); ?>>
 <div id="page" class="site">
-
+	<div class="top-header">
+		<div class="container">
+			<p>Tham gia Group để cùng nhau chia sẽ về mã Giảm giá và mua hàng </p>
+			<ul class="social-list align-right">
+				<li class="social-list_item">
+					<a target="_blank" rel="noopener" href="https://www.facebook.com/groups/1895929324003794" class="social-list_link is-facebook" aria-label="facebook">
+						<i class="fa fa-facebook"></i>
+					</a>
+				</li>
+				<!-- <li class="social-list_item">
+					<a target="_blank" rel="noopener" href="" class="social-list_link is-twitter" aria-label="twitter">
+						<i class="fa fa-twitter"></i>
+					</a>
+				</li>
+				<li class="social-list_item">
+					<a target="_blank" rel="noopener" href="" class="social-list_link is-google" aria-label="google"><i class="fa fa-google"></i>
+					</a>
+				</li> -->
+			</ul>
+		</div>
+	</div>
 	<header id="masthead" class="site-header">
 		<div class="container">
 			<?php get_logo(); ?>

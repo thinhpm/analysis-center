@@ -108,7 +108,9 @@ global $wpdb;
 					</select>
 					<button class='call-filter-category'>Lọc</button>
 				</div>
+				<iframe width="100%" height="35" src="https://lap.lazada.com/searchbar/searchbar.php?aff_id=182393&country=vn" frameborder="0" scrolling="no"></iframe>
 			</div>
+
 			<div class="container">
 				<h2>Các Sản Phẩm Giảm giá nhiều nhất trong 1h qua</h2>
 				<div class="product-list">
