@@ -329,6 +329,7 @@ function filter_category_save_db() {
 		}
 	}
 
+	
 	print_r('done');
 
 	die();
@@ -348,6 +349,7 @@ function filter_product() {
 
 // get post new
 add_shortcode('get_post_new','get_post_new');
+
 function get_post_new($atts, $content = null){
     $wp_query = new WP_Query(array(
         'post_type'      => 'post',
@@ -358,15 +360,15 @@ function get_post_new($atts, $content = null){
         ));
     ob_start();
     if( $wp_query->have_posts() ):
-    echo '<div class="post-new">';
+    echo '<div class="post_new">';
     while( $wp_query->have_posts() ): $wp_query->the_post();
     ?> 
-    <div class="item-post">
-    	<a class="images-post"> href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
-	        <?php the_post_thumbnail(); ?>
-	    </a>
-     <h4> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
-    </div>
+    <a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+        <?php the_post_thumbnail(); ?>
+    </a>
+        <h4> <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+        <p class="excerpt"><?php echo wp_trim_words(get_the_content(),100,'...'); ?></p>
+        <a rel="nofollow" target="_blank" href="<?php the_permalink(); ?>">Continue Reading</a>
     <?php
     endwhile;
     wp_reset_query();
@@ -376,3 +378,95 @@ function get_post_new($atts, $content = null){
     ob_end_clean();
     return $list_post;
 }
+
+
+function filter_all_category() {
+	global $wpdb;
+
+	$categories = $wpdb->get_results ("SELECT * FROM categories");
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products" );
+	$percent = 80;
+	$numPage = 25;
+	ini_set('max_execution_time', 300);
+
+
+	foreach ($categories as $value) {
+		$categoryName = $value->id_category;
+		
+		$mainResult = [];
+
+		$stt = 1;
+		
+
+		while(true) {
+			$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
+			preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
+
+			if(count($output_array[0]) == 0 || $stt == $numPage){
+				break;
+			}
+
+			foreach($output_array[0] as $value){
+				$arrResult = [];
+				$discount = getValueOf($value, 'discount');
+				$discount = str_replace('-', '', $discount);
+				$discount = str_replace('%', '', $discount);
+
+				if ($discount >= $percent) {
+					$name = getValueOf($value, 'name');
+					$id_product = getValueOf($value, 'itemId');
+					$linkProduct = 'https:' . getValueOf($value, 'productUrl');
+					$imageProduct = getValueOf($value, 'image');
+				    $originalPrice = getValueOf($value, 'originalPrice');
+				    $originalPrice = str_replace('.00', '', $originalPrice);
+				    $originalPrice = str_replace('.0', '', $originalPrice);
+				    $price = getValueOf($value, 'price');
+				    $lastUpdate = date("Y-m-d H:i:s");
+				    $price = str_replace('.00', '', $price);
+
+					$arrResult['id_product'] = $id_product;
+					$arrResult['name'] = $name;
+					$arrResult['linkProduct'] = $linkProduct;
+					$arrResult['imageProduct'] = $imageProduct;
+					$arrResult['originalPrice'] = $originalPrice;
+					$arrResult['price'] = $price;
+					$arrResult['discount'] = $discount;
+					$arrResult['last_update'] = $lastUpdate;
+					$arrResult['name_category'] = $categoryName;
+
+					array_push($mainResult, $arrResult);
+
+				}
+			}
+
+			$stt++;
+		}
+
+		category_save_db($mainResult, $arrProductId);
+
+	}
+}
+
+function category_save_db($arrayData, $arrProductId) {
+	global $wpdb;
+
+	if (empty($arrayData)) {
+		return;
+	}
+
+	foreach ($arrProductId as $key => $value) {
+		$arrProductId[$key] = $value->id_product;
+	}
+
+	foreach ($arrayData as $key => $value) {
+		if (in_array($value['id_product'], $arrProductId)) {
+			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
+		} else {
+			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] ."')" );			
+		}
+	}
+
+	return;
+}
+
+add_action( 'wpb_custom_cron', 'filter_all_category' );

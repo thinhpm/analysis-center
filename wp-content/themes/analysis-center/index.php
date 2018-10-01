@@ -119,28 +119,33 @@ global $wpdb;
 					<?php
 					    $results = $wpdb->get_results ( "SELECT * FROM products ORDER BY `percent` DESC LIMIT 50" );
 
-
 					    foreach ( $results as $product )   {
-					    ?>
-					
-						<div class="col-md-3">
-							<div class="item">
-								<div class="images-product">
-									<a href="<?php echo $product->link_product;?>"><img src="<?php echo $product->image_product;?>"></a>
+					    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+							$datetime2 = new DateTime($product->last_update);
+							$diff = $datetime1->diff($datetime2);
+
+							if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+							    ?>
+							
+								<div class="col-md-3">
+									<div class="item">
+										<div class="images-product">
+											<a href="<?php echo $product->link_product;?>"><img src="<?php echo $product->image_product;?>"></a>
+										</div>
+										<h4 class="title-product">
+											<a href="<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
+										</h4>
+										<div class="price-product">
+											<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+											<div class="price"><?php echo $product->price;?> Đ</td></div>
+										</div>
+										<div class="percent"><?php echo $product->percent;?>%</div>
+										<div class="last-update"><?php echo $product->last_update ;?></div>
+									</div>
 								</div>
-								<h4 class="title-product">
-									<a href="<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
-								</h4>
-								<div class="price-product">
-									<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-									<div class="price"><?php echo $product->price;?> Đ</td></div>
-								</div>
-								<div class="percent"><?php echo $product->percent;?>%</div>
-								<div class="last-update"><?php echo $product->last_update ;?></div>
-							</div>
-						</div>
-					 <?php }
-					  ?> 
+							 <?php }
+							}
+					  	?> 
 					</div>
 				</div>
 			</div>
