@@ -97,6 +97,7 @@ global $wpdb;
 						 ?>
 					</select>
 					<select id='list-percent'>
+						<option data='90'> >= 99%</option>
 						<option data='90'> >= 90%</option>
 						<option data='80'> >= 80%</option>
 						<option data='70'> >= 70%</option>
