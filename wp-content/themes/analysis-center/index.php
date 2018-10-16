@@ -103,8 +103,6 @@ global $wpdb;
 						<option data='50'> >= 50%</option>
 						<option data='40'> >= 40%</option>
 						<option data='30'> >= 30%</option>
-						<option data='20'> >= 20%</option>
-						<option data='10'> >= 10%</option>
 					</select>
 					<button class='call-filter-category'>Lọc</button>
 				</div>
