@@ -124,7 +124,7 @@ global $wpdb;
 							$datetime2 = new DateTime($product->last_update);
 							$diff = $datetime1->diff($datetime2);
 
-							if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+							if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 24){
 							    ?>
 							
 								<div class="col-md-3">
