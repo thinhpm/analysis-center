@@ -63,7 +63,7 @@ global $wpdb;
 				           		
 				           	},
 				           	success: function(response) {
-				           		console.log('done update data!');
+
 				           	},
 				           	error: function( jqXHR, textStatus, errorThrown ){
 				                console.log( 'The following error occured: ' + textStatus, errorThrown );
