@@ -45,31 +45,32 @@ global $wpdb;
 		           	},
 		           	success: function(response) {
 		           		$(".loading").css("display", "none");
+
 		           		if(response['result'] == ''){
 		           			alert("Không tìm thấy sản phẩm nào");
+		           		} else {
+		           			$('.product-list .row').html(response['result']);
+
+			               	// save to database
+			               	$.ajax({
+					           	type : "post",
+					           	dataType : "json",
+					           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+					           	data : {
+					                action: "filter_category_save_db",
+					                arrayData: response['arrayData']
+					           	},
+					           	beforeSend: function(){
+					           		
+					           	},
+					           	success: function(response) {
+
+					           	},
+					           	error: function( jqXHR, textStatus, errorThrown ){
+					                console.log( 'The following error occured: ' + textStatus, errorThrown );
+					           	}
+					       });
 		           		}
-		               	$('.product-list .row').html(response['result']);
-
-		               	// save to database
-		               	$.ajax({
-				           	type : "post",
-				           	dataType : "json",
-				           	url : '<?php echo admin_url('admin-ajax.php');?>', 
-				           	data : {
-				                action: "filter_category_save_db",
-				                arrayData: response['arrayData']
-				           	},
-				           	beforeSend: function(){
-				           		
-				           	},
-				           	success: function(response) {
-
-				           	},
-				           	error: function( jqXHR, textStatus, errorThrown ){
-				                console.log( 'The following error occured: ' + textStatus, errorThrown );
-				           	}
-				       });
-
 		           	},
 		           	error: function( jqXHR, textStatus, errorThrown ){
 		                console.log( 'The following error occured: ' + textStatus, errorThrown );
