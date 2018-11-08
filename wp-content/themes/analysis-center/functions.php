@@ -383,10 +383,12 @@ function get_post_new($atts, $content = null){
 function filter_all_category() {
 	global $wpdb;
 
-	$categories = $wpdb->get_results ("SELECT * FROM categories");
-	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products" );
-	$percent = 80;
+	$idWeb = 1;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$percent = 1;
 	$numPage = 25;
+	
 	ini_set('max_execution_time', 300);
 
 
@@ -402,6 +404,8 @@ function filter_all_category() {
 			$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
 			preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
 
+			print_r('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
+		die;
 			if(count($output_array[0]) == 0 || $stt == $numPage){
 				break;
 			}
@@ -433,6 +437,7 @@ function filter_all_category() {
 					$arrResult['discount'] = $discount;
 					$arrResult['last_update'] = $lastUpdate;
 					$arrResult['name_category'] = $categoryName;
+					$arrResult['id_web'] = $idWeb;
 
 					array_push($mainResult, $arrResult);
 
@@ -441,6 +446,7 @@ function filter_all_category() {
 
 			$stt++;
 		}
+
 
 		category_save_db($mainResult, $arrProductId);
 
@@ -462,7 +468,9 @@ function category_save_db($arrayData, $arrProductId) {
 		if (in_array($value['id_product'], $arrProductId)) {
 			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
 		} else {
-			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] ."')" );			
+			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
+			print_r("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
+			// return;		
 		}
 	}
 
@@ -470,3 +478,93 @@ function category_save_db($arrayData, $arrProductId) {
 }
 
 add_action( 'wpb_custom_cron', 'filter_all_category' );
+
+function filter_all_category_tiki() {
+	
+	$idWeb = '3';
+	
+	global $wpdb;
+
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
+	$percent = 10;
+	$numPage = 5;
+	ini_set('max_execution_time', 300);
+
+	foreach ($categories as $categorie) {
+		$mainResult = [];
+		$stt = 1;
+
+		while(true) {
+
+			if($stt == $numPage){
+				break;
+			}
+
+			$data = file_get_contents('https://tiki.vn/' . $categorie->id_category . '?src=mega-menu&order=price%2Casc&page=' . $stt);
+
+			$doc = new DOMDocument();
+			@$doc->loadHTML('<?xml encoding="UTF-8">' . $data);
+
+			$nodes = $doc->getElementsByTagName('div');
+
+			foreach ($nodes as $node) {
+				$arrResult = [];
+
+				if($node->hasAttribute('data-seller-product-id')) {
+					$tag_a = $node->getElementsByTagName('a')->item(0);
+					$idProduct = $tag_a->getAttribute('data-id');
+					$name = $tag_a->getAttribute('title');
+					$linkProduct = $tag_a->getAttribute('href');
+					$imageProduct = $node->getElementsByTagName('img')->item(0)->getAttribute('src');
+					$tag_span = $node->getElementsByTagName('span');
+
+					foreach ($tag_span as $span) {
+						if ($span->getAttribute('class') == 'price-regular') {
+							$originalPrice = $span->nodeValue;
+							$originalPrice = str_replace('.', '', $originalPrice);
+							$originalPrice = str_replace('₫', '', $originalPrice);
+						}
+						if ($span->getAttribute('class') == 'final-price') {
+							$price = trim($span->nodeValue);
+							$price = str_replace('.', '', $price);
+							$price = str_replace('₫', '', $price);
+						}
+						if ($span->getAttribute('class') == 'sale-tag sale-tag-square') {
+							$discount = $span->nodeValue;
+							$discount = str_replace('%', '', $discount);
+							$discount = str_replace('-', '', $discount);
+						}
+					}
+
+					$lastUpdate = date("Y-m-d H:i:s");
+
+					$arrResult['id_product'] = $idProduct;
+					$arrResult['name'] = $name;
+					$arrResult['linkProduct'] = $linkProduct;
+					$arrResult['imageProduct'] = $imageProduct;
+					$arrResult['originalPrice'] = $originalPrice;
+					$arrResult['price'] = $price;
+					$arrResult['discount'] = $discount;
+					$arrResult['last_update'] = $lastUpdate;
+					$arrResult['name_category'] = $categorie->id_category;
+					$arrResult['id_web'] = $idWeb;
+
+					array_push($mainResult, $arrResult);
+
+					
+				}
+				
+			}
+
+			$stt++;
+		}
+
+		category_save_db($mainResult, $arrProductId);
+		
+	}
+
+
+
+	
+}
