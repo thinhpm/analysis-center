@@ -19,7 +19,6 @@
  */
 
 get_header();
-filter_all_category();
 
 global $wpdb;
 // get_voucher();

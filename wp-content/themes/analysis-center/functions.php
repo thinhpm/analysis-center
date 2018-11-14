@@ -404,8 +404,6 @@ function filter_all_category() {
 			$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
 			preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
 
-			print_r('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
-		die;
 			if(count($output_array[0]) == 0 || $stt == $numPage){
 				break;
 			}
@@ -465,12 +463,13 @@ function category_save_db($arrayData, $arrProductId) {
 	}
 
 	foreach ($arrayData as $key => $value) {
+		$value['price'] = trim((int)($value['price']));
+		$value['originalPrice'] = trim((int)($value['originalPrice']));
+
 		if (in_array($value['id_product'], $arrProductId)) {
 			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
 		} else {
 			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
-			print_r("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
-			// return;		
 		}
 	}
 
@@ -487,9 +486,9 @@ function filter_all_category_tiki() {
 
 	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
 	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
-	$percent = 10;
-	$numPage = 5;
-	ini_set('max_execution_time', 300);
+	$percent = 60;
+	$numPage = 50;
+	ini_set('max_execution_time', '-1');
 
 	foreach ($categories as $categorie) {
 		$mainResult = [];
@@ -537,6 +536,10 @@ function filter_all_category_tiki() {
 						}
 					}
 
+					if ((int)$discount < $percent) {
+						continue;
+					}
+
 					$lastUpdate = date("Y-m-d H:i:s");
 
 					$arrResult['id_product'] = $idProduct;
@@ -558,13 +561,52 @@ function filter_all_category_tiki() {
 			}
 
 			$stt++;
+
 		}
 
 		category_save_db($mainResult, $arrProductId);
-		
 	}
+}
 
+add_action( 'wpb_custom_cron_filter_tiki', 'filter_all_category_tiki' );
 
+function get_data_voucher($data, $name) {
+	preg_match("/". $name ."=\"(.+?)\"/", $data, $output_array);
+	return $output_array[1];
+}
 
+function get_voucher() {
+	global $wpdb;
+	ini_set('max_execution_time', 300);
+
+	$arr_website = [
+		'lazada' => 'https://mgg.vn/ma-giam-gia/lazada/',
+		'shopee' => 'https://mgg.vn/ma-giam-gia/shopee/',
+		'tiki' => 'https://mgg.vn/ma-giam-gia/tiki-vn/'
+	];
+
+	foreach ($arr_website as $name_web => $link_web) {
+		$data = file_get_contents($link_web);
 	
+		preg_match_all("/<h3 class=\"coupon-title\">(.+?)<div class=\"coupon-des\">/", $data, $output_array);
+
+		if(count($output_array[1]) > 0) {
+			foreach ($output_array[1] as $key => $value) {
+				$title_type = get_data_voucher($value, 'data-type');
+
+				if($title_type == 'code') {
+					preg_match("/<span class=\"exp\">(.+?)<\/span>/", $value, $time_out);
+
+					if($time_out[1] != 'Đã hết hạn' && $time_out[1] != '') {
+						$title = get_data_voucher($value, 'title');
+						$data_code = get_data_voucher($value, 'data-code');
+
+						$results = $wpdb->get_results("INSERT INTO voucher (code, type, name, description, time_out, website) VALUES ('". $data_code ."', 'code', '". $title ."', '". $title ."','". $time_out[1] ."', '". $name_web ."')");	
+
+
+					}
+				}
+			}
+		}
+	}
 }
