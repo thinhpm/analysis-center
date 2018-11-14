@@ -383,10 +383,12 @@ function get_post_new($atts, $content = null){
 function filter_all_category() {
 	global $wpdb;
 
-	$categories = $wpdb->get_results ("SELECT * FROM categories");
-	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products" );
-	$percent = 80;
+	$idWeb = 1;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$percent = 1;
 	$numPage = 25;
+	
 	ini_set('max_execution_time', 300);
 
 
@@ -433,6 +435,7 @@ function filter_all_category() {
 					$arrResult['discount'] = $discount;
 					$arrResult['last_update'] = $lastUpdate;
 					$arrResult['name_category'] = $categoryName;
+					$arrResult['id_web'] = $idWeb;
 
 					array_push($mainResult, $arrResult);
 
@@ -441,6 +444,7 @@ function filter_all_category() {
 
 			$stt++;
 		}
+
 
 		category_save_db($mainResult, $arrProductId);
 
@@ -459,10 +463,13 @@ function category_save_db($arrayData, $arrProductId) {
 	}
 
 	foreach ($arrayData as $key => $value) {
+		$value['price'] = trim((int)($value['price']));
+		$value['originalPrice'] = trim((int)($value['originalPrice']));
+
 		if (in_array($value['id_product'], $arrProductId)) {
 			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
 		} else {
-			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] ."')" );			
+			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
 		}
 	}
 
@@ -470,3 +477,136 @@ function category_save_db($arrayData, $arrProductId) {
 }
 
 add_action( 'wpb_custom_cron', 'filter_all_category' );
+
+function filter_all_category_tiki() {
+	
+	$idWeb = '3';
+	
+	global $wpdb;
+
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
+	$percent = 60;
+	$numPage = 50;
+	ini_set('max_execution_time', '-1');
+
+	foreach ($categories as $categorie) {
+		$mainResult = [];
+		$stt = 1;
+
+		while(true) {
+
+			if($stt == $numPage){
+				break;
+			}
+
+			$data = file_get_contents('https://tiki.vn/' . $categorie->id_category . '?src=mega-menu&order=price%2Casc&page=' . $stt);
+
+			$doc = new DOMDocument();
+			@$doc->loadHTML('<?xml encoding="UTF-8">' . $data);
+
+			$nodes = $doc->getElementsByTagName('div');
+
+			foreach ($nodes as $node) {
+				$arrResult = [];
+
+				if($node->hasAttribute('data-seller-product-id')) {
+					$tag_a = $node->getElementsByTagName('a')->item(0);
+					$idProduct = $tag_a->getAttribute('data-id');
+					$name = $tag_a->getAttribute('title');
+					$linkProduct = $tag_a->getAttribute('href');
+					$imageProduct = $node->getElementsByTagName('img')->item(0)->getAttribute('src');
+					$tag_span = $node->getElementsByTagName('span');
+
+					foreach ($tag_span as $span) {
+						if ($span->getAttribute('class') == 'price-regular') {
+							$originalPrice = $span->nodeValue;
+							$originalPrice = str_replace('.', '', $originalPrice);
+							$originalPrice = str_replace('₫', '', $originalPrice);
+						}
+						if ($span->getAttribute('class') == 'final-price') {
+							$price = trim($span->nodeValue);
+							$price = str_replace('.', '', $price);
+							$price = str_replace('₫', '', $price);
+						}
+						if ($span->getAttribute('class') == 'sale-tag sale-tag-square') {
+							$discount = $span->nodeValue;
+							$discount = str_replace('%', '', $discount);
+							$discount = str_replace('-', '', $discount);
+						}
+					}
+
+					if ((int)$discount < $percent) {
+						continue;
+					}
+
+					$lastUpdate = date("Y-m-d H:i:s");
+
+					$arrResult['id_product'] = $idProduct;
+					$arrResult['name'] = $name;
+					$arrResult['linkProduct'] = $linkProduct;
+					$arrResult['imageProduct'] = $imageProduct;
+					$arrResult['originalPrice'] = $originalPrice;
+					$arrResult['price'] = $price;
+					$arrResult['discount'] = $discount;
+					$arrResult['last_update'] = $lastUpdate;
+					$arrResult['name_category'] = $categorie->id_category;
+					$arrResult['id_web'] = $idWeb;
+
+					array_push($mainResult, $arrResult);
+
+					
+				}
+				
+			}
+
+			$stt++;
+
+		}
+
+		category_save_db($mainResult, $arrProductId);
+	}
+}
+
+add_action( 'wpb_custom_cron_filter_tiki', 'filter_all_category_tiki' );
+
+function get_data_voucher($data, $name) {
+	preg_match("/". $name ."=\"(.+?)\"/", $data, $output_array);
+	return $output_array[1];
+}
+
+function get_voucher() {
+	global $wpdb;
+	ini_set('max_execution_time', 300);
+
+	$arr_website = [
+		'lazada' => 'https://mgg.vn/ma-giam-gia/lazada/',
+		'shopee' => 'https://mgg.vn/ma-giam-gia/shopee/',
+		'tiki' => 'https://mgg.vn/ma-giam-gia/tiki-vn/'
+	];
+
+	foreach ($arr_website as $name_web => $link_web) {
+		$data = file_get_contents($link_web);
+	
+		preg_match_all("/<h3 class=\"coupon-title\">(.+?)<div class=\"coupon-des\">/", $data, $output_array);
+
+		if(count($output_array[1]) > 0) {
+			foreach ($output_array[1] as $key => $value) {
+				$title_type = get_data_voucher($value, 'data-type');
+
+				if($title_type == 'code') {
+					preg_match("/<span class=\"exp\">(.+?)<\/span>/", $value, $time_out);
+
+					if($time_out[1] != 'Đã hết hạn' && $time_out[1] != '') {
+						$title = get_data_voucher($value, 'title');
+						$data_code = get_data_voucher($value, 'data-code');
+
+						$results = $wpdb->get_results("INSERT INTO voucher (code, type, name, description, time_out, website) VALUES ('". $data_code ."', 'code', '". $title ."', '". $title ."','". $time_out[1] ."', '". $name_web ."')");	
+
+
+					}
+				}
+			}
+		}
+	}
+}
