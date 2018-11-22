@@ -469,12 +469,39 @@ function category_save_db($arrayData, $arrProductId) {
 		if (in_array($value['id_product'], $arrProductId)) {
 			$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
 		} else {
+
 			$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
 		}
 	}
 
 	return;
 }
+
+function category_save_db_api($value, $arrProductId) {
+	global $wpdb;
+
+	if (empty($value)) {
+		return;
+	}
+	$lastUpdate = date("Y-m-d H:i:s");
+
+	foreach ($arrProductId as $key => $value2) {
+		$arrProductId[$key] = $value2->id_product;
+	}
+
+	$value['price'] = trim((int)($value['price']));
+	$value['original_price'] = trim((int)($value['original_price']));
+
+	if (in_array($value['id_product'], $arrProductId)) {
+		$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['original_price'] .", price = ". $value['price'] .", percent = ". $value['percent'] .", last_update = '". $lastUpdate . "' WHERE id_product = ". $value['id_product'] . "");
+	} else {
+		$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name_product'] . "', '". $value['link_product'] ."', '". $value['image_product'] ."', ". $value['original_price'] .",". $value['price'] .", ". $value['percent'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
+	
+	}
+
+	return;
+}
+
 
 add_action( 'wpb_custom_cron', 'filter_all_category' );
 
@@ -609,4 +636,41 @@ function get_voucher() {
 			}
 		}
 	}
+}
+
+add_action('wp_ajax_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
+add_action('wp_ajax_nopriv_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
+
+function api_v1_lazada_get_db() {
+	global $wpdb;
+	$idWeb = 1;
+	
+	$results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web=" . $idWeb . " ORDER BY `percent` DESC LIMIT 50" );
+
+	wp_send_json($results);
+}
+
+add_action('wp_ajax_api_v1_lazada_set_db', 'api_v1_lazada_set_db');
+add_action('wp_ajax_nopriv_api_v1_lazada_set_db', 'api_v1_lazada_set_db');
+
+function api_v1_lazada_set_db() {
+	global $wpdb;
+	$idWeb = 1;
+
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$arrayData = [];
+
+    $arrayData['id_product'] = $_GET['id_product'];
+    $arrayData['name_product'] = $_GET['name_product'];
+    $arrayData['link_product'] = $_GET['link_product'];
+    $arrayData['image_product'] = $_GET['image_product'];
+    $arrayData['original_price'] = $_GET['original_price'];
+    $arrayData['price'] = $_GET['price'];
+    $arrayData['percent'] = $_GET['percent'];
+    $arrayData['name_category'] = $_GET['name_category'];
+    $arrayData['id_web'] = $_GET['id_web'];
+
+	category_save_db_api($arrayData, $arrProductId);
+
+	echo "Done";
 }
