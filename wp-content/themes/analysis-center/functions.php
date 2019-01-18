@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Analysis Center functions and definitions
  *
@@ -158,6 +158,7 @@ add_action( 'widgets_init', 'analysis_center_widgets_init' );
 function analysis_center_scripts() {
 	wp_enqueue_style( 'analysis-center-style', get_stylesheet_uri() );
 	wp_enqueue_style( 'main-style', get_template_directory_uri().'/css/main.css');
+	wp_enqueue_style( 'vourcher.css', get_template_directory_uri().'/css/vourcher.css');
 	wp_enqueue_style( 'font-Awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' );
 	wp_enqueue_style( 'bootstrapstyle', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' );
 
@@ -673,4 +674,64 @@ function api_v1_lazada_set_db() {
 	category_save_db_api($arrayData, $arrProductId);
 
 	echo "Done";
+}
+
+function checkDateVoucher($stringText) {
+	if ($stringText == 'No Expires') {
+		return true;
+	}
+
+	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+	$monthNow = $datetime1->format('m');
+	$yearNow = '20' . $datetime1->format('y');
+
+	$arr = explode("/", $stringText);
+
+	$monthEx = $arr[1];
+	$yearEx = $arr[2];
+
+	if ((int)$yearNow <= (int)$yearEx && (int)$monthNow <= (int)$monthEx) {
+		return true;
+	}
+
+	return false;
+}
+
+add_action('wp_ajax_option_item', 'option_item');
+add_action('wp_ajax_nopriv_option_item', 'option_item');
+
+function option_item() {
+	global $wpdb;
+
+	$result = '';
+	$id = $_GET['id'];
+	$value = $_GET['value'];
+	$results = $wpdb->get_results ( "UPDATE products SET status = ". $value . " WHERE id = ". $id . "");
+	echo 'true';
+	die();
+}
+
+add_action('wp_ajax_get_google_ads', 'get_google_ads');
+add_action('wp_ajax_nopriv_get_google_ads', 'get_google_ads');
+
+function get_google_ads() {
+	$result = '';
+	$url = $_POST['url'];
+	$data = file_get_contents($url);
+
+	preg_match_all("/https:\/\/googleads.g.doubleclick.net\/aclk(.+?)\"/", $data, $output_array);
+	
+	$link = $output_array[0][0];
+	$link = unescapeUTF8EscapeSeq($link);
+	$link = str_replace('"', '', $link);
+
+	wp_send_json($link);
+	die();
+}
+
+function unescapeUTF8EscapeSeq($str) {
+    return preg_replace_callback("/\\\u([0-9a-f]{4})/i",
+        create_function('$matches',
+            'return html_entity_decode(\'&#x\'.$matches[1].\';\', ENT_QUOTES, \'UTF-8\');'
+        ), $str);
 }
