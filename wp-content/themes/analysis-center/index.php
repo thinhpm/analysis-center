@@ -23,8 +23,6 @@ get_header();
 global $wpdb;
 // get_voucher();
 ?>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 	<div id="primary" class="content-area home-page">
 		<main id="main" class="site-main">
 			<div class="container">
@@ -177,6 +175,7 @@ global $wpdb;
 		</div>
 	</div>
 	<input type="hidden" id="ads-google" value="" name="ads-google">
+	<input type="hidden" id="url-ajax" value="<?php echo admin_url('admin-ajax.php');?>" name="url-ajax">
 	
 <?php
 get_footer();

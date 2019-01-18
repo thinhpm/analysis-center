@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	const url_ajax = $('#url-ajax').val();
+
     if ($('#back-to-top').length) {
 	    var scrollTrigger = 100;
 	    var backToTop = function () {
@@ -36,7 +38,7 @@ $(document).ready(function() {
 	$(document).on("click", '.btn-get-code', function() {
 		var url = $(this).attr('data-aff-url');
 		
-		window.open(url, "_blank");
+		// window.open(url, "_blank");
 	});
 
 	setIntervalAds();
@@ -54,7 +56,7 @@ $(document).ready(function() {
 			$.ajax({
 	           	type : "POST",
 	           	dataType : "json", 
-	           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+	           	url : url_ajax, 
 	           	data : {
 	                action: "get_google_ads", 
 	                url: url
@@ -117,7 +119,7 @@ $(document).ready(function() {
         $.ajax({
            	type : "get",
            	dataType : "json", 
-           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+           	url : url_ajax, 
            	data : {
                 action: "filter_category", 
                 name_category: name_category,
@@ -138,7 +140,7 @@ $(document).ready(function() {
                	$.ajax({
 		           	type : "post",
 		           	dataType : "json",
-		           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+		           	url : url_ajax, 
 		           	data : {
 		                action: "filter_category_save_db",
 		                arrayData: response['arrayData']
@@ -169,7 +171,7 @@ $(document).ready(function() {
     	$.ajax({
            	type : "get",
            	dataType : "html", 
-           	url : '<?php echo admin_url('admin-ajax.php');?>', 
+           	url : url_ajax, 
            	data : {
                 action: "option_item", 
                 id: id,
