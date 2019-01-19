@@ -102,7 +102,18 @@ global $wpdb;
 					  	?> 
 					</div>
 				</div>
-
+				<div class="ads-gg-1" style="max-height: 80px">
+					<!-- first ads -->
+					<ins class="adsbygoogle"
+					     style="display:block"
+					     data-ad-client="ca-pub-8663190089908401"
+					     data-ad-slot="5657388695"
+					     data-ad-format="auto"
+					     data-full-width-responsive="true"></ins>
+					<script>
+					(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</div>
 				<h2>Các Sản Phẩm Tiki Giảm giá nhiều nhất trong 2h qua</h2>
 				<div class="product-list">
 					<div class="row">
