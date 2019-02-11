@@ -25,8 +25,6 @@ global $wpdb;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="/wp-content/themes/analysis-center/css/voucher.css" data-minify="1">data-minify="1">
 	
 <div class="store-listings st-list-coupons" style="padding: 0 50px">
 	<?php 
@@ -59,7 +57,7 @@ global $wpdb;
 				 				</div>
 				 			</div>
 				 			<div class="coupon-detail coupon-button-type">
-				 				<a rel="nofollow" data-type="code" data-coupon-id="<?php echo $item->id ?>" href="javascript:void(0)" class="coupon-button coupon-code btn-get-code" data-tooltip="Nhấn để lấy mã" data-code="<?php echo $item->code ?>" data-aff-url="http://lazada.vn">
+				 				<a rel="nofollow" data-type="code" data-coupon-id="<?php echo $item->id ?>" href="javascript:void(0)" class="coupon-button coupon-code btn-get-code" data-tooltip="Nhấn để lấy mã" data-code="<?php echo $item->code ?>">
 				 					<span class="code-text" rel="nofollow"> <?php echo $item->code ?> </span>
 				 					<span class="get-code" data-toggle="modal" data-target="#myModal-<?php echo $stt ?>">Lấy Mã</span>
 				 				</a>
@@ -69,7 +67,7 @@ global $wpdb;
 				 			</div>
 				 		</div>
 				 		<div class="clear"></div>
-				 		<div id="myModal-<?php echo $stt ?>" class="modal fade modal-voucher" role="dialog">
+				 		<div id="myModal-<?php echo $stt ?>" class="modal fade modal-voucher" role="dialog" data-aff-url="http://lazada.vn">
 						  	<div class="modal-dialog">
 						    	<div class="modal-content">
 						      		<div class="modal-header">

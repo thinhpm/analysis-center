@@ -25,8 +25,6 @@ global $wpdb;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link href="<?php echo get_template_directory_uri();?>/css/voucher.css" rel="stylesheet">
 
 <div class="store-listings st-list-coupons" style="padding: 0 50px">
 	<?php 
@@ -69,7 +67,7 @@ global $wpdb;
 				 			</div>
 				 		</div>
 				 		<div class="clear"></div>
-				 		<div id="myModal-<?php echo $stt ?>" class="modal fade modal-voucher" role="dialog">
+				 		<div id="myModal-<?php echo $stt ?>" class="modal fade modal-voucher" role="dialog" data-aff-url="http://lazada.vn">
 						  	<div class="modal-dialog">
 						    	<div class="modal-content">
 						      		<div class="modal-header">
@@ -91,7 +89,6 @@ global $wpdb;
 		}
 	?>
 </div>
-<script type="text/javascript" src="/wp-content/themes/analysis-center/js/main.js"></script>
 <?php
 // get_sidebar();
 get_footer();
