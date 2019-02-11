@@ -158,7 +158,6 @@ add_action( 'widgets_init', 'analysis_center_widgets_init' );
 function analysis_center_scripts() {
 	wp_enqueue_style( 'analysis-center-style', get_stylesheet_uri() );
 	wp_enqueue_style( 'main-style', get_template_directory_uri().'/css/main.css');
-	wp_enqueue_style( 'vourcher.css', get_template_directory_uri().'/css/vourcher.css');
 	wp_enqueue_style( 'font-Awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' );
 	wp_enqueue_style( 'bootstrapstyle', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' );
 
@@ -167,7 +166,6 @@ function analysis_center_scripts() {
 	wp_enqueue_script( 'analysis-center-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
 	
 	wp_enqueue_script( 'main.js', get_template_directory_uri() . '/js/main.js', array('jquery'),'1.0', true );
-	wp_enqueue_script( 'bootstrap.js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js', array('jquery'),'1.0', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -515,7 +513,7 @@ function filter_all_category_tiki() {
 
 	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
 	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
-	$percent = 80;
+	$percent = 60;
 	$numPage = 50;
 	ini_set('max_execution_time', '-1');
 
@@ -647,7 +645,7 @@ function api_v1_lazada_get_db() {
 	global $wpdb;
 	$idWeb = 1;
 	
-	$results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web=" . $idWeb . " ORDER BY `percent` DESC LIMIT 50" );
+	$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 ORDER BY `T`.`last_update` DESC LIMIT 50" );
 
 	wp_send_json($results);
 }
@@ -676,244 +674,3 @@ function api_v1_lazada_set_db() {
 
 	echo "Done";
 }
-
-function checkDateVoucher($stringText) {
-	if ($stringText == 'No Expires') {
-		return true;
-	}
-
-	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
-	$monthNow = $datetime1->format('m');
-	$yearNow = '20' . $datetime1->format('y');
-
-	$arr = explode("/", $stringText);
-
-	$monthEx = $arr[1];
-	$yearEx = $arr[2];
-
-	if ((int)$yearNow <= (int)$yearEx && (int)$monthNow <= (int)$monthEx) {
-		return true;
-	}
-
-	return false;
-}
-
-add_action('wp_ajax_option_item', 'option_item');
-add_action('wp_ajax_nopriv_option_item', 'option_item');
-
-function option_item() {
-	global $wpdb;
-
-	$result = '';
-	$id = $_GET['id'];
-	$value = $_GET['value'];
-	$results = $wpdb->get_results ( "UPDATE products SET status = ". $value . " WHERE id = ". $id . "");
-	echo 'true';
-	die();
-}
-
-add_action('wp_ajax_get_google_ads', 'get_google_ads');
-add_action('wp_ajax_nopriv_get_google_ads', 'get_google_ads');
-
-function get_google_ads() {
-	$result = '';
-	$url = $_POST['url'];
-	$data = file_get_contents($url);
-
-	preg_match_all("/https:\/\/googleads.g.doubleclick.net\/aclk(.+?)\"/", $data, $output_array);
-	
-	$link = $output_array[0][0];
-	$link = unescapeUTF8EscapeSeq($link);
-	$link = str_replace('"', '', $link);
-
-	wp_send_json($link);
-	die();
-}
-
-function unescapeUTF8EscapeSeq($str) {
-    return preg_replace_callback("/\\\u([0-9a-f]{4})/i",
-        create_function('$matches',
-            'return html_entity_decode(\'&#x\'.$matches[1].\';\', ENT_QUOTES, \'UTF-8\');'
-        ), $str);
-}
-
-function filter_all_category_shopee() {
-	ini_set('max_execution_time', '-1');
-	global $wpdb;
-	$percent = 81;
-	$numPage = 5000;
-	$idWeb = 2;
-
-	$mainResult = [];
-	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
-
-	$url = "https://shopee.vn/api/v1/category_list/";
-
-	$opts = [
-	    "http" => [
-	        "method" => "GET",
-	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-	    ]
-	];
-
-	$context = stream_context_create($opts);
-
-	$list_category = file_get_contents($url, false, $context);
-
-	foreach (json_decode($list_category) as $category) {
-		$category_id = $category->main->catid;
-
-		for ($i = 0; $i <= $numPage; $i += 50) {
-			$url = "https://shopee.vn/api/v2/search_items/?by=price&limit=50&match_id=" . $category_id . "&newest=" . $i . "&order=asc&page_type=search&rating_filter=1";
-
-			$data = file_get_contents($url, false, $context);
-
-			$list_item = json_decode($data);
-
-			$list_item = $list_item->items;
-
-			foreach ($list_item as $item) {
-				$arrResult = [];
-				$discount = $item->discount;
-				$discount = str_replace("%", "", $discount);
-
-				if (!empty($discount) && $discount >= $percent) {
-					
-					$arrResult = get_info_item($item, $category_id, $idWeb, $discount);
-
-					array_push($mainResult, $arrResult);
-				}
-			}
-		}
-
-	}
-
-	category_save_db($mainResult, $arrProductId);
-}
-
-function get_info_item($item, $category_id, $idWeb, $discount) {
-	ini_set('max_execution_time', '-1');
-	$arrResult = [];
-	$originalPrice = '';
-	$name_category = $category_id;
-	$price = '';
-	$shop_id = $item->shopid;
-
-	$index1 = strpos($item->name, "#", 1);
-	$name = $item->name;
-
-	if ($index1 !== false){
-		$name = substr($item->name, 0, $index1);
-	}
-
-	$linkProduct = str_replace(" ", "-", $name);
-
-	$linkProduct = "https://shopee.vn/" . $linkProduct . "-i." . $shop_id . "." . $item->itemid;
-
-	$lastUpdate = date("Y-m-d H:i:s");
-
-	$url = "https://shopee.vn/api/v2/item/get?itemid=" . $item->itemid . "&shopid=". $shop_id;
-
-	$opts = [
-	    "http" => [
-	        "method" => "GET",
-	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-	    ]
-	];
-
-	$context = stream_context_create($opts);
-
-	$list_item = file_get_contents($url, false, $context);
-
-	$item_detail = json_decode($list_item)->item;
-	
-	$originalPrice = $item_detail->price_before_discount;
-	$originalPrice = str_replace("00000", "", $originalPrice);
-	$price = $item_detail->price;
-	$price = str_replace("00000", "", $price);
-	$imageProduct = "https://cf.shopee.vn/file/" . $item_detail->image;
-
-	$arrResult['id_product'] = $item->itemid;
-	$arrResult['name'] = $item->name;
-	$arrResult['linkProduct'] = $linkProduct;
-	$arrResult['imageProduct'] = $imageProduct;
-	$arrResult['originalPrice'] = $originalPrice;
-	$arrResult['price'] = $price;
-	$arrResult['discount'] = $discount;
-	$arrResult['last_update'] = $lastUpdate;
-	$arrResult['name_category'] = $name_category;
-	$arrResult['id_web'] = $idWeb;
-
-	return $arrResult;
-}
-
-add_action( 'wpb_custom_cron_filter_shopee', 'filter_all_category_shopee' );
-
-function filter_all_category_sendo() {
-	ini_set('max_execution_time', '-1');
-	global $wpdb;
-	$percent = 81;
-	$numPage = 25;
-	$idWeb = 4;
-
-	$mainResult = [];
-	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
-
-	$url = "https://www.sendo.vn/m/wap_v2/category/sitemap";
-
-	$opts = [
-	    "http" => [
-	        "method" => "GET",
-	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-	    ]
-	];
-
-	$context = stream_context_create($opts);
-
-	$list_category = file_get_contents($url, false, $context);
-
-	$list_category = json_decode($list_category)->result->data;
-
-	foreach ($list_category as $category) {
-		foreach ($category->child as $category_id) {
-			$category_id = $category_id->id;
-
-			for ($i = 0; $i <= $numPage; $i++) {
-				$url = "https://www.sendo.vn/m/wap_v2/category/product?category_id=" . $category_id . "&listing_algo=algo6&p=" . $i . "&s=60&sortType=price_asc";
-
-				$data = file_get_contents($url, false, $context);
-
-				$list_item = json_decode($data);
-
-				$list_item = $list_item->result->data;
-
-				foreach ($list_item as $item) {
-					$arrResult = [];
-					$discount = $item->promotion_percent;
-					$discount = str_replace("%", "", $discount);
-
-					if (!empty($discount) && $discount >= $percent) {
-						$lastUpdate = date("Y-m-d H:i:s");
-						$linkProduct = "https://sendo.vn/" . $item->cat_path;
-						$arrResult['id_product'] = $item->product_id;
-						$arrResult['name'] = $item->name;
-						$arrResult['linkProduct'] = $linkProduct;
-						$arrResult['imageProduct'] = $item->image;
-						$arrResult['originalPrice'] = $item->price;
-						$arrResult['price'] = $item->final_price;
-						$arrResult['discount'] = $discount;
-						$arrResult['last_update'] = $lastUpdate;
-						$arrResult['name_category'] = $category_id;
-						$arrResult['id_web'] = $idWeb;
-
-						array_push($mainResult, $arrResult);
-					}
-				}
-			}
-		}
-	}
-
-	category_save_db($mainResult, $arrProductId);
-}
-
-add_action( 'wpb_custom_cron_filter_sendo', 'filter_all_category_sendo' );

@@ -12,8 +12,9 @@
 ?>
 
 	</div><!-- #content -->
-
+<canvas id="fireworks"></canvas>
 	<footer id="colophon" class="site-footer">
+		<a href="#" id="back-to-top" title="Back to top">&uarr;</a>
 		<div class="site-info">
 			<div class="container">
 				<div class="row">
@@ -62,7 +63,7 @@
 			<div class="copyrights">
 				<div class="container">
 					<div class="row">
-						<div class="col-xs-12 col-sm-9">
+						<div class="col-xs-12 col-sm-8">
 							<p>© 2018 - present <a href="mgghot.com">Mgghot.com</a> All Rights Reserved</p>
 							<ul class="inline-list">
 								<li class="inline-list_item">
@@ -75,23 +76,22 @@
 								</li>
 							</ul>
 						</div>
-						<div class="col-xs-12 col-sm-3">
-							<ul class="social-list align-right">
-								<li class="social-list_item">
-									<a target="_blank" rel="noopener" href="https://www.facebook.com/groups/1895929324003794" class="social-list_link is-facebook" aria-label="facebook">
-										<i class="fa fa-facebook"></i>
-									</a>
-								</li>
-								<!-- <li class="social-list_item">
-									<a target="_blank" rel="noopener" href="" class="social-list_link is-twitter" aria-label="twitter">
-										<i class="fa fa-twitter"></i>
-									</a>
-								</li>
-								<li class="social-list_item">
-									<a target="_blank" rel="noopener" href="" class="social-list_link is-google" aria-label="google"><i class="fa fa-google"></i>
-									</a>
-								</li> -->
-							</ul>
+						<div class="col-xs-12 col-sm-4">
+							<div class="row">
+								<div class="col-md-6">
+									<p><?php echo "Hôm nay:".do_shortcode('[wpstatistics stat=visitors time=today]');?></p>
+									<p><?php echo "Tháng này:".do_shortcode('[wpstatistics stat=visitors time=month]');?></p>
+								</div>
+								<div class="col-md-6">
+									<ul class="social-list align-right">
+										<li class="social-list_item">
+											<a target="_blank" rel="noopener" href="https://www.facebook.com/groups/1895929324003794" class="social-list_link is-facebook" aria-label="facebook">
+												<i class="fa fa-facebook"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
