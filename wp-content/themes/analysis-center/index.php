@@ -46,119 +46,251 @@ global $wpdb;
 				<a href="https://shorten.asia/RTa3Bfk1" target="_blank">
 					<img src="https://salt.tikicdn.com/ts/lp/a3/1c/85/15db38bccda4a0486100fc397b28fe3b.png">
 				</a>
-				<h2>Các Sản Phẩm Lazada Giảm giá nhiều nhất trong 2h qua</h2>
-				<div class="product-list">
-					<div class="row">
+				
+				<div class="tabs">
+					<ul class="nav nav-tabs">
+					    <li class="active"><a data-toggle="tab" href="#lazada">Lazada</a></li>
+					    <li><a data-toggle="tab" href="#tiki">Tiki</a></li>
+					    <li><a data-toggle="tab" href="#sendo">Sendo</a></li>
+					    <li><a data-toggle="tab" href="#shopee">Shopee</a></li>
+					</ul>
 
-					<?php
-					    $results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
-					//$results = [];
-					    foreach ( $results as $product )   {
-					     	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
-							 $datetime2 = new DateTime($product->last_update);
-							 $diff = $datetime1->diff($datetime2);
+				  <div class="tab-content">
+				    <div id="lazada" class="tab-pane fade in active">
+				      <h2>Các Sản Phẩm Lazada Giảm giá nhiều nhất trong 2h qua</h2>
+						<div class="product-list">
+							<div class="row">
 
-							 if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
-							    ?>
-								<?php 
-									$class_item = '';
+							<?php
+							    $results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+							//$results = [];
+							    foreach ( $results as $product )   {
+							     	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+									 $datetime2 = new DateTime($product->last_update);
+									 $diff = $datetime1->diff($datetime2);
 
-									if ($product->status == 0) {
-										$class_item = 'hidden-item';
-									}
+									 if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 5){
+									    ?>
+										<?php 
+											$class_item = '';
 
-									if(is_user_logged_in() && $product->status == 0) {
-										$class_item = 'admin-hidden-item';
-									}
-								?>
-								<div class="col-md-3 <?php echo $class_item; ?>">
-									<?php 
-										if(is_user_logged_in()) {
+											if ($product->status == 0) {
+												$class_item = 'hidden-item';
+											}
+
+											if(is_user_logged_in() && $product->status == 0) {
+												$class_item = 'admin-hidden-item';
+											}
+										?>
+										<div class="col-md-3 <?php echo $class_item; ?>">
+											<?php 
+												if(is_user_logged_in()) {
+													?>
+													<select class="select-option" data-id="<?php echo $product->id; ?>">
+														<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
+														<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
+													</select>
+													<?php
+												}
 											?>
-											<select class="select-option" data-id="<?php echo $product->id; ?>">
-												<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
-												<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
-											</select>
-											<?php
+											<div class="item">
+												<div class="images-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+												</div>
+												<h4 class="title-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+												</h4>
+												<div class="price-product">
+													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+													<div class="price"><?php echo $product->price;?> Đ</td></div>
+												</div>
+												<div class="percent"><?php echo $product->percent;?>%</div>
+												<div class="last-update"><?php echo $product->last_update ;?></div>
+											</div>
+										</div>
+									 <?php }
+									 }
+							  	?> 
+							</div>
+						</div>
+				    </div>
+				    <div id="tiki" class="tab-pane fade">
+				     <h2>Các Sản Phẩm Tiki Giảm giá nhiều nhất trong 2h qua</h2>
+					<div class="product-list">
+						<div class="row">
+
+						<?php
+						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
+						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 84 AND id_web = 3  ORDER BY `T`.`last_update` DESC LIMIT 100" );
+
+						    foreach ( $results as $product )   {
+						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+								$datetime2 = new DateTime($product->last_update);
+								$diff = $datetime1->diff($datetime2);
+
+								if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+								    ?>
+									<?php 
+										$class_item = '';
+
+										if ($product->status == 0) {
+											$class_item = 'hidden-item';
+										}
+
+										if(is_user_logged_in() && $product->status == 0) {
+											$class_item = 'admin-hidden-item';
 										}
 									?>
-									<div class="item">
-										<div class="images-product">
-											<a target="_self" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+									<div class="col-md-3 <?php echo $class_item; ?>">
+										<?php 
+											if(is_user_logged_in()) {
+												?>
+												<select class="select-option" data-id="<?php echo $product->id; ?>">
+													<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
+													<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
+												</select>
+												<?php
+											}
+										?>
+										<div class="item">
+											<div class="images-product">
+												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+											</div>
+											<h4 class="title-product">
+												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+											</h4>
+											<div class="price-product">
+												<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+												<div class="price"><?php echo $product->price;?> Đ</td></div>
+											</div>
+											<div class="percent"><?php echo $product->percent;?>%</div>
+											<div class="last-update"><?php echo $product->last_update ;?></div>
 										</div>
-										<h4 class="title-product">
-											<a target="_self" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
-										</h4>
-										<div class="price-product">
-											<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-											<div class="price"><?php echo $product->price;?> Đ</td></div>
-										</div>
-										<div class="percent"><?php echo $product->percent;?>%</div>
-										<div class="last-update"><?php echo $product->last_update ;?></div>
 									</div>
-								</div>
-							 <?php }
-							 }
-					  	?> 
+								 <?php }
+								 }
+						  	?> 
+						</div>
 					</div>
-				</div>
+				    </div>
+				    <div id="sendo" class="tab-pane fade">
+				      	<h2>Các Sản Phẩm Sendo Giảm giá nhiều nhất trong 2h qua</h2>
+				      	<div class="product-list">
+							<div class="row">
+							<?php
+							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
+								$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 4 AND percent > 81 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
 
-				<h2>Các Sản Phẩm Tiki Giảm giá nhiều nhất trong 2h qua</h2>
-				<div class="product-list">
-					<div class="row">
+							    foreach ( $results as $product )   {
+							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+									$datetime2 = new DateTime($product->last_update);
+									$diff = $datetime1->diff($datetime2);
 
-					<?php
-					    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-					$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 84 AND id_web = 3  ORDER BY `T`.`last_update` DESC LIMIT 100" );
+									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+									    ?>
+										<?php 
+											$class_item = '';
 
-					    foreach ( $results as $product )   {
-					    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
-							$datetime2 = new DateTime($product->last_update);
-							$diff = $datetime1->diff($datetime2);
+											if ($product->status == 0) {
+												$class_item = 'hidden-item';
+											}
 
-							if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
-							    ?>
-								<?php 
-									$class_item = '';
-
-									if ($product->status == 0) {
-										$class_item = 'hidden-item';
-									}
-
-									if(is_user_logged_in() && $product->status == 0) {
-										$class_item = 'admin-hidden-item';
-									}
-								?>
-								<div class="col-md-3 <?php echo $class_item; ?>">
-									<?php 
-										if(is_user_logged_in()) {
+											if(is_user_logged_in() && $product->status == 0) {
+												$class_item = 'admin-hidden-item';
+											}
+										?>
+										<div class="col-md-3 <?php echo $class_item; ?>">
+											<?php 
+												if(is_user_logged_in()) {
+													?>
+													<select class="select-option" data-id="<?php echo $product->id; ?>">
+														<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
+														<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
+													</select>
+													<?php
+												}
 											?>
-											<select class="select-option" data-id="<?php echo $product->id; ?>">
-												<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
-												<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
-											</select>
-											<?php
-										}
-									?>
-									<div class="item">
-										<div class="images-product">
-											<a target="_self" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+											<div class="item">
+												<div class="images-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+												</div>
+												<h4 class="title-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+												</h4>
+												<div class="price-product">
+													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+													<div class="price"><?php echo $product->price;?> Đ</td></div>
+												</div>
+												<div class="percent"><?php echo $product->percent;?>%</div>
+												<div class="last-update"><?php echo $product->last_update ;?></div>
+											</div>
 										</div>
-										<h4 class="title-product">
-											<a target="_self" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
-										</h4>
-										<div class="price-product">
-											<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-											<div class="price"><?php echo $product->price;?> Đ</td></div>
+									 <?php }
+									 }
+							  	?> 
+							</div>
+						</div>
+				    </div>
+				    <div id="shopee" class="tab-pane fade">
+				      	<h2>Các Sản Phẩm Shopee Giảm giá nhiều nhất trong 2h qua</h2>
+				      	<div class="product-list">
+							<div class="row">
+
+							<?php
+							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
+							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 84 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+
+							    foreach ( $results as $product )   {
+							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
+									$datetime2 = new DateTime($product->last_update);
+									$diff = $datetime1->diff($datetime2);
+
+									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+									    ?>
+										<?php 
+											$class_item = '';
+
+											if ($product->status == 0) {
+												$class_item = 'hidden-item';
+											}
+
+											if(is_user_logged_in() && $product->status == 0) {
+												$class_item = 'admin-hidden-item';
+											}
+										?>
+										<div class="col-md-3 <?php echo $class_item; ?>">
+											<?php 
+												if(is_user_logged_in()) {
+													?>
+													<select class="select-option" data-id="<?php echo $product->id; ?>">
+														<option value="1" <?php echo $product->status == 0 ? "selected" : '' ?> >show</option>
+														<option value="0" <?php echo $product->status == 0 ? "selected" : '' ?> >disable</option>
+													</select>
+													<?php
+												}
+											?>
+											<div class="item">
+												<div class="images-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+												</div>
+												<h4 class="title-product">
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+												</h4>
+												<div class="price-product">
+													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
+													<div class="price"><?php echo $product->price;?> Đ</td></div>
+												</div>
+												<div class="percent"><?php echo $product->percent;?>%</div>
+												<div class="last-update"><?php echo $product->last_update ;?></div>
+											</div>
 										</div>
-										<div class="percent"><?php echo $product->percent;?>%</div>
-										<div class="last-update"><?php echo $product->last_update ;?></div>
-									</div>
-								</div>
-							 <?php }
-							 }
-					  	?> 
-					</div>
+									 <?php }
+									 }
+							  	?> 
+							</div>
+						</div>
+				    </div>
+				  </div>
 				</div>
 			</div>
 		</main><!-- #main -->
