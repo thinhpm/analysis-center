@@ -923,27 +923,30 @@ add_action('wp_ajax_nopriv_set_voucher', 'set_voucher');
 
 function set_voucher() {
 	global $wpdb;
-	$id_coupon = $_POST['data'];
-	// $id_coupon = $_POST['id_coupon'];
-	// $code = $_POST['code'];
-	// $is_voucher = $_POST['is_voucher'];
-	// $percent = $_POST['percent'];
-	// $name = $_POST['name'];
-	// $description = $_POST['description'];
-	// $link_aff = $_POST['link_aff'];
-	// $time_out = $_POST['time_out'];
-	// $website = $_POST['website'];
+	$id_coupon = $_POST['id_coupon'];
+	$code = $_POST['code'];
+	$is_voucher = $_POST['is_voucher'];
+	$percent = $_POST['percent'];
+	$name = $_POST['name'];
+	$description = $_POST['description'];
+	$link_aff = $_POST['link_aff'];
+	$time_out = $_POST['date_exp'];
+	$name_cate = $_POST['name_cate'];
+	$website = $_POST['website'];
 
-	// $arr
+	$arr_id_coupon = $wpdb->get_results ("SELECT id_coupon FROM voucher WHERE website='" . $website . "'");
 
+	foreach ($arr_id_coupon as $key => $value) {
+		$arr_id_coupon[$key] = $value->id_coupon;
+	}
+	
 
-	// if (in_array($value['id_product'], $arrProductId)) {
-	// 	$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['originalPrice'] .", price = ". $value['price'] .", percent = ". $value['discount'] .", last_update = '". $value['last_update'] . "' WHERE id_product = ". $value['id_product'] . "");
-	// } else {
+	if (in_array($id_coupon, $arr_id_coupon)) {
+		$results = $wpdb->get_results ( "UPDATE voucher SET time_out = '". $time_out ."' WHERE id_coupon = '". $id_coupon . "'");
+	} else {
+		$results = $wpdb->get_results("INSERT INTO voucher (id_coupon, code, is_voucher, percent, name, description, link_aff, time_out, name_cate, website) VALUES ('". $id_coupon ."', '". $code . "', '". $is_voucher ."', '". $percent ."', '". $name ."','". $description ."', '". $link_aff ."', '". $time_out . "','". $name_cate . "', '" . $website ."')");
+	}
 
-	// 	$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name'] . "', '". $value['linkProduct'] ."', '". $value['imageProduct'] ."', ". $value['originalPrice'] .",". $value['price'] .", ". $value['discount'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
-	// }
-
-	wp_send_json(($id_coupon));
+	wp_send_json('Done');
 	die;
 }
