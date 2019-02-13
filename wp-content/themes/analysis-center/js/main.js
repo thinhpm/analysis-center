@@ -37,13 +37,7 @@ $(document).ready(function() {
 
 	$('.modal-voucher').on('hidden.bs.modal', function () {
 		var url = $(this).attr('data-aff-url');
-	    alert(url);
-	});
-
-	$(document).on("click", '.btn-get-code', function(e) {
-		var url = $(this).attr('data-aff-url');
-		
-		// window.open(url, "_blank");
+	    window.open(url, "_blank");
 	});
 
 	// setIntervalAds();

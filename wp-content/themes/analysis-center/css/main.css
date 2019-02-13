@@ -446,3 +446,52 @@ footer a {
 .admin-hidden-item .item{
     background-color: crimson;
 }
+
+.title-cate {
+	color: #fa5f34;
+	margin: 39px 0;
+}
+
+.store-listings{
+	padding: 0 50px;
+    margin-top: 53px;
+}
+
+.title-cate:first-child {
+	color: #fa5f34;
+	margin: 39px 0;
+}
+.store-listing-item .store-thumb-link .store-thumb {
+	width: 150px;
+    max-width: 150px;
+    margin-bottom: 5px;
+    height: 89px;
+    position: relative;
+    background-color: #f90;
+}
+
+.store-listing-item .store-thumb-link .store-thumb span{
+	position: absolute;
+    top: calc(50% - 12px);
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.coupon-button-type .coupon-code.btn-bonus {
+	background: #f90;
+    color: #fff;
+    text-align: center;
+    border: none;
+}
+
+.coupon-button-type .coupon-code.btn-bonus:hover {
+	text-decoration: none;
+}
+
+.title-voucher {
+	text-align: center;
+    margin-top: 33px !important;
+}

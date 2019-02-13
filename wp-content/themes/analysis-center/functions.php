@@ -940,7 +940,6 @@ function set_voucher() {
 		$arr_id_coupon[$key] = $value->id_coupon;
 	}
 	
-
 	if (in_array($id_coupon, $arr_id_coupon)) {
 		$results = $wpdb->get_results ( "UPDATE voucher SET time_out = '". $time_out ."' WHERE id_coupon = '". $id_coupon . "'");
 	} else {
