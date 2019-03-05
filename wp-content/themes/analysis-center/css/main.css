@@ -495,3 +495,82 @@ footer a {
 	text-align: center;
     margin-top: 33px !important;
 }
+ 
+/* Youbtube tool */
+/* Dropdown Button */
+.add-channel .dropbtn {
+	display: block;
+	background-color: #3498DB;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	padding: 6px 10px;
+	margin-bottom: 7px;
+}
+
+/* Dropdown button on hover & focus */
+.add-channel .dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.add-channel .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.add-channel .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.add-channel .dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.add-channel .dropdown-content a:hover {background-color: #ddd}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.add-channel .show {display:block;}
+
+.add-channel .warrap-add-channel {
+	display: table;
+	width: 250px;
+}
+.add-channel .warrap-add-channel input{
+	display: table-cell;
+	width: calc(100% - 50px);
+}
+.add-channel .warrap-add-channel button{
+	display: table-cell;
+	padding: 2px 8px;
+}
+.add-channel {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.btn-remove-channel {
+	width: 24px;
+    margin: 0 auto;
+    display: block;
+    height: 24px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
+
+/* End Youbtube tool */

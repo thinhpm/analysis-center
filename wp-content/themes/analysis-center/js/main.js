@@ -188,4 +188,97 @@ $(document).ready(function() {
            	}
        	});
     });
+
+    $(document).on("click", ".dropbtn", function() {
+    	document.getElementById("myDropdown").classList.toggle("show");
+    });
+
+	$(document).on("click", ".warrap-add-channel button", function() {
+		var url_channel = $('input[name="add-channel"]').val();
+
+		$.ajax({
+           	type : "post",
+           	dataType : "json",
+           	url : url_ajax, 
+           	data : {
+                action: "add_channel",
+                url_channel: url_channel
+           	},
+           	beforeSend: function(){
+           		
+           	},
+           	success: function(response) {
+           		location.reload();
+           	},
+           	error: function( jqXHR, textStatus, errorThrown ){
+                console.log( 'The following error occured: ' + textStatus, errorThrown );
+           	}
+       });
+	});
+
+	$(document).on("click", "#btn-login-youtube", function(e) {
+		checkLogin(url_ajax);
+	});
+
+	$(document).on("keypress", "#password", function(e) {
+		if (e.keyCode == 13) {
+			checkLogin(url_ajax);
+		}
+	});
+
+	$(document).on("click", ".btn-remove-channel", function() {
+		var id_channel = $(this).attr('data-id');
+		var element = $(this);
+		$.ajax({
+	       	type : "post",
+	       	dataType : "json",
+	       	url : url_ajax, 
+	       	data : {
+	            action: "remove_channel",
+	            id_channel: id_channel
+	       	},
+	       	beforeSend: function(){
+	       		
+	       	},
+	       	success: function(response) {
+	       		if (response.success) {
+	       			element.parents('tr').hide();
+	       		}
+	       	},
+	       	error: function( jqXHR, textStatus, errorThrown ){
+	            console.log( 'The following error occured: ' + textStatus, errorThrown );
+	       	}
+	   });
+	});
+
 });
+
+function checkLogin(url_ajax) {
+	var user_name = $('#user-name').val();
+	var password = $('#password').val();
+
+	$.ajax({
+       	type : "get",
+       	dataType : "json",
+       	url : url_ajax, 
+       	data : {
+            action: "process_form_login",
+            user_name: user_name,
+            password, password
+       	},
+       	beforeSend: function(){
+       		
+       	},
+       	success: function(response) {
+       		if (response.status) {
+       			location.href = "youtuber";
+       		} else {
+           		alert("Login fail");
+       		}
+       	},
+       	error: function( jqXHR, textStatus, errorThrown ){
+            console.log( 'The following error occured: ' + textStatus, errorThrown );
+       	}
+   });
+}
+

@@ -918,10 +918,48 @@ function filter_all_category_sendo() {
 
 add_action( 'wpb_custom_cron_filter_sendo', 'filter_all_category_sendo' );
 
-function set_sesstion() {
-	session_start();
-	$_SESSION["userName"] = "thinhpm";
+add_action('wp_ajax_set_voucher', 'set_voucher');
+add_action('wp_ajax_nopriv_set_voucher', 'set_voucher');
+
+function set_voucher() {
+	global $wpdb;
+	$id_coupon = $_POST['id_coupon'];
+	$code = $_POST['code'];
+	$is_voucher = $_POST['is_voucher'];
+	$percent = $_POST['percent'];
+	$name = $_POST['name'];
+	$description = $_POST['description'];
+	$link_aff = $_POST['link_aff'];
+	$time_out = $_POST['date_exp'];
+	$name_cate = $_POST['name_cate'];
+	$website = $_POST['website'];
+
+	$arr_id_coupon = $wpdb->get_results ("SELECT id_coupon FROM voucher WHERE website='" . $website . "'");
+
+	foreach ($arr_id_coupon as $key => $value) {
+		$arr_id_coupon[$key] = $value->id_coupon;
+	}
+	
+	if (in_array($id_coupon, $arr_id_coupon)) {
+		$results = $wpdb->get_results ( "UPDATE voucher SET time_out = '". $time_out ."' WHERE id_coupon = '". $id_coupon . "'");
+	} else {
+		$results = $wpdb->get_results("INSERT INTO voucher (id_coupon, code, is_voucher, percent, name, description, link_aff, time_out, name_cate, website) VALUES ('". $id_coupon ."', '". $code . "', '". $is_voucher ."', '". $percent ."', '". $name ."','". $description ."', '". $link_aff ."', '". $time_out . "','". $name_cate . "', '" . $website ."')");
+	}
+
+	wp_send_json('Done');
+	die;
 }
+
+
+add_action('wp_ajax_check_login', 'check_login');
+add_action('wp_ajax_nopriv_check_login', 'check_login');
+
+function check_login() {
+
+	wp_send_json(['success'=> true, 'check' => 'aaa']);
+	die;
+}
+
 
 function get_list_key_api() {
 	global $wpdb;
@@ -990,8 +1028,7 @@ function get_info_channel($id_channel) {
 			'view_count' => $view_count,
 			'subscriber_count' => $subscriber_count,
 			'hidden_subscriber_count' => $hidden_subscriber_count,
-			'video_count' => $video_count,
-			'id_channel' => $id_channel
+			'video_count' => $video_count
 		];
 	}
 
@@ -1036,49 +1073,5 @@ function add_channel() {
 
 	$wpdb->get_results("INSERT INTO channels (id_channel, user) VALUES ('" . $id_channel . "', " . $user_id . ")");
 	wp_send_json('Done');
-	die;
-}
-
-add_action('wp_ajax_process_form_login', 'process_form_login');
-add_action('wp_ajax_nopriv_process_form_login', 'process_form_login');
-
-function process_form_login() {
-	global $wpdb;
-
-	$user_name = $_GET['user_name'];
-
-	$password = $_GET['password'];
-	$password = base64_url_encode($password);
-
-	$result = $wpdb->get_results("SELECT * FROM user_for_youtube WHERE `user_name` = '" . $user_name . "' and `password` = '" . $password . "'");
-	
-	if (count($result) == 0) {
-		wp_send_json(['status' => false]);
-	}
-
-	$_SESSION['user_name'] = $user_name;
-	wp_send_json(['status' => true]);
-	die;
-}
-
-function base64_url_encode($input) {
- 	return strtr(base64_encode($input), '+/=', '._-');
-}
-
-function base64_url_decode($input) {
- 	return base64_decode(strtr($input, '._-', '+/='));
-}
-
-add_action('wp_ajax_remove_channel', 'remove_channel');
-add_action('wp_ajax_nopriv_remove_channel', 'remove_channel');
-
-function remove_channel() {
-	global $wpdb;
-	$user_id = $_SESSION['user_id'];
-	$id_channel = $_POST['id_channel'];
-
-	$wpdb->get_results("DELETE FROM `channels` WHERE `id_channel`='" . $id_channel ."' AND `user`=" . $user_id);
-
-	wp_send_json(['success' => true]);
 	die;
 }
