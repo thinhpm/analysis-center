@@ -167,6 +167,8 @@ function analysis_center_scripts() {
 	wp_enqueue_script( 'analysis-center-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
 	
 	wp_enqueue_script( 'main.js', get_template_directory_uri() . '/js/main.js', array('jquery'),'1.0', true );
+	wp_enqueue_script( 'jquery.lazy.min.js', get_template_directory_uri() . '/js/jquery.lazy-master/jquery.lazy.min.js', array('jquery'),'1.0', true );
+	wp_enqueue_script( 'jquery.lazy.plugins.js', get_template_directory_uri() . '/js/jquery.lazy-master/jquery.lazy.plugins.js', array('jquery'),'1.0', true );
 	wp_enqueue_script( 'bootstrap.js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js', array('jquery'),'1.0', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
@@ -952,15 +954,22 @@ function set_voucher() {
 
 function get_list_key_api() {
 	global $wpdb;
-
+	$result = '';
 	$apis = $wpdb->get_results ("SELECT key_api FROM key_apis WHERE `active` = true");
 
-	return $apis;
+	if (!empty($apis)) {
+		foreach ($apis as $item) {
+			$result .= $item->key_api . ',';
+		}
+	}
+
+	return $result;
 }
 
 function get_list_channel() {
 	global $wpdb;
 
+	$result = '';
 	$user_name = $_SESSION["user_name"];
 	$ids = $wpdb->get_results ("SELECT id FROM user_for_youtube WHERE `user_name`='" . $user_name . "'");
 
@@ -970,7 +979,13 @@ function get_list_channel() {
 
 		$channels = $wpdb->get_results ("SELECT id_channel FROM channels WHERE `user`='" . $id_user . "'");
 
-		return $channels;
+		if (!empty($channels)) {
+			foreach ($channels as $item) {
+				$result .= $item->id_channel . ',';
+			}
+		}
+
+		return $result;
 	}
 }
 

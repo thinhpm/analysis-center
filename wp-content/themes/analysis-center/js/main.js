@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	const url_ajax = $('#url-ajax').val();
 
+	$('.lazy-images').lazy();
+
     if ($('#back-to-top').length) {
 	    var scrollTrigger = 100;
 	    var backToTop = function () {
@@ -251,6 +253,8 @@ $(document).ready(function() {
 	   });
 	});
 
+	getInfoChannels();
+
 });
 
 function checkLogin(url_ajax) {
@@ -282,3 +286,58 @@ function checkLogin(url_ajax) {
    });
 }
 
+function createHtmlShowInfo(response) {
+	var table_channels = $('.table-show-indo-channels');
+	var id_channel = response.items[0].id;
+	var snippet = response.items[0].snippet;
+	var name_channel = snippet.title;
+	var statistics = response.items[0].statistics;
+	var view_count = statistics.viewCount;
+	var subscriber_count = statistics.subscriberCount;
+	var hidden_subscriber_count = statistics.hiddenSubscriberCount;
+	var video_count = statistics.videoCount;
+
+	var result = "<tr>";
+	result +="<td>" + name_channel + "</td>";
+	result +="<td>" + video_count + "</td>";
+	result +="<td>" + view_count + "</td>";
+	result +="<td>" + subscriber_count + "</td>"
+	result +="<td>" + hidden_subscriber_count + "</td>"
+	result +="<td><span class='btn-remove-channel' data-id=" + id_channel + ">x</span></td>"
+	result +="</tr>";
+
+	table_channels.append(result);
+}
+
+function callAjaxGetInfo(url) {
+	$.ajax({
+       	type : "get",
+       	dataType : "json",
+       	url : url,
+       	beforeSend: function(){
+       		
+       	},
+       	success: function(response) {
+       		createHtmlShowInfo(response);
+       	},
+       	error: function( jqXHR, textStatus, errorThrown ){
+            console.log( 'The following error occured: ' + textStatus, errorThrown );
+       	}
+   });
+}
+
+function getInfoChannels() {
+	var channels = ($('#list-channels').val()).split(',');
+	var key_apis = ($('#list-key-apis').val()).split(',');
+	
+	if (channels.length > 0) {
+		for (var i = 0; i < channels.length; i++) {
+			if (channels[i] != '') {
+				var url = "https://www.googleapis.com/youtube/v3/channels?key="+ key_apis[0] +"&part=snippet,statistics&id=" + channels[i];
+
+				callAjaxGetInfo(url);
+			}
+		}
+	}
+}
+	

@@ -26,9 +26,9 @@ global $wpdb;
 	<div id="primary" class="content-area home-page">
 		<main id="main" class="site-main">
 			<div class="container">
-				<div class="search-list">
+<!-- 				<div class="search-list">
 				</div>
-				<iframe width="100%" height="35" src="https://lap.lazada.com/searchbar/searchbar.php?aff_id=182393&country=vn" frameborder="0" scrolling="no"></iframe>
+				<iframe width="100%" height="35" src="https://lap.lazada.com/searchbar/searchbar.php?aff_id=182393&country=vn" frameborder="0" scrolling="no"></iframe> -->
 			</div>
 
 			<div class="container">
@@ -95,10 +95,10 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
@@ -154,7 +154,7 @@ global $wpdb;
 										?>
 										<div class="item">
 											<div class="images-product">
-												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 											</div>
 											<h4 class="title-product">
 												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
@@ -212,7 +212,7 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
 													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
@@ -271,7 +271,7 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
 													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
