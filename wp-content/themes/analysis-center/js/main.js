@@ -253,9 +253,48 @@ $(document).ready(function() {
 	   });
 	});
 
-	getInfoChannels();
+	$(document).on("click", ".btn-show-detail-channel", function() {
+		var modal_title = $('#myModal .modal-title');
+		var id_channel = $(this).attr('data-id');
+		var name_channel = $(this).attr('data-name');
+		var key_apis = ($('#list-key-apis').val()).split(',');
+		var modal_body = $('#myModal .modal-body tr.item');
+
+		modal_body.remove();
+		modal_title.text(name_channel);
+
+		$('#myModal').modal('show');
+		setTimeout(function() {
+			showListVideoInChannelByOrder(id_channel, key_apis[0]);
+		}, 0);
+	});
+
+	$(document).on("click", ".btn-order-list", function() {
+		var modal_title = $('#myModal .modal-title');
+		var id_channel = modal_title.attr('id-channel');
+		var key_api = $('#list-key-apis').val();
+
+		showListVideoInChannelByOrder(id_channel, key_api, 'viewCount');
+	});
+
+	getInfoChannels(url_ajax);
 
 });
+
+function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
+	var modal_title = $('#myModal .modal-title');
+	var modal_body = $('#myModal .modal-body tr.item');
+
+	modal_body.remove();
+	modal_title.attr("id-channel", id_channel);
+	var list_id_video = getListVideos(id_channel, order);
+	
+	var results = getDetailVideo(list_id_video, key_api);
+
+	for (var i = 0; i < results.length; i++) {
+		createHtmlShowDetailInfo(results[i], i + 1);
+	}
+}
 
 function checkLogin(url_ajax) {
 	var user_name = $('#user-name').val();
@@ -286,6 +325,87 @@ function checkLogin(url_ajax) {
    });
 }
 
+function getDetailVideo(list_id_video, key_api) {
+	var video_id = '';
+	var result = [];
+	var results = [];
+	var j = 0;
+
+	for (var i = 0; i < list_id_video.length; i++) {
+		video_id += list_id_video[i] + ',';
+
+		if (j > 40 || i == list_id_video.length - 1) {
+			var url = "https://www.googleapis.com/youtube/v3/videos?key="+ key_api +"&part=snippet,statistics&id=" + video_id;
+
+			$.ajax({
+				async: false,
+		       	type : "get",
+		       	dataType : "json",
+		       	url : url,
+		       	beforeSend: function(){
+		       		
+		       	},
+		       	success: function(response) {
+		       		result = getDetailByRespone(response);
+		       		results.push.apply(results, result);
+		       	},
+		       	error: function( jqXHR, textStatus, errorThrown ){
+		            console.log( 'The following error occured: ' + textStatus, errorThrown );
+		       	}
+		   	});
+
+		   	j = 0;
+		   	video_id = '';
+		}
+
+		j++;
+	}
+
+	return results;
+}
+
+function createHtmlShowDetailInfo(item, stt) {
+	var table_channels = $('.table-show-detail-video');
+	var title = item.title
+	var view_count = item.view_count;
+	var published_at = item.published_at;
+	var id = item.id;
+
+	var result = "<tr class='item'>";
+	result +="<td>" + stt +"</td>";
+	result +="<td>" + title +"</td>";
+	result +="<td>" + view_count + "</td>";
+	result +="<td>" + published_at + "</td>";
+	result +="<td><a target='_blank' href='https://www.youtube.com/watch?v=" + id + "'>" + "click" + "</td>"
+	result +="</tr>";
+
+	table_channels.append(result);
+}
+
+function getDetailByRespone(response) {
+	var items = response.items;
+	var results = [];
+
+	for (var i = 0; i < items.length; i++) {
+		var snippet = items[i].snippet;
+		var statistics = items[i].statistics;
+		var title = snippet.title;
+		var view_count = statistics.viewCount;
+		var published_at = snippet.publishedAt;
+
+		var result =  {
+			'id' : items[i].id,
+			'title' : title,
+			'view_count' : view_count,
+			'published_at' : published_at
+		};
+
+		results.push(result);
+	}
+
+	return results;
+}
+
 function createHtmlShowInfo(response) {
 	var table_channels = $('.table-show-indo-channels');
 	var id_channel = response.items[0].id;
@@ -298,19 +418,23 @@ function createHtmlShowInfo(response) {
 	var video_count = statistics.videoCount;
 
 	var result = "<tr>";
-	result +="<td>" + name_channel + "</td>";
+	result +="<td class='btn-show-detail-channel' data-id='" + id_channel + "' data-name='" + name_channel + "'>" + name_channel + "</td>";
 	result +="<td>" + video_count + "</td>";
 	result +="<td>" + view_count + "</td>";
-	result +="<td>" + subscriber_count + "</td>"
-	result +="<td>" + hidden_subscriber_count + "</td>"
-	result +="<td><span class='btn-remove-channel' data-id=" + id_channel + ">x</span></td>"
+	result +="<td>" + subscriber_count + "</td>";
+	result +="<td>" + hidden_subscriber_count + "</td>";
+	result +="<td><a target='_blank' href='https://www.youtube.com/channel/" + id_channel + "'>" + "click" + "</td>"
+	result +="<td><span class='btn-remove-channel' data-id=" + id_channel + ">x</span></td>";
 	result +="</tr>";
 
 	table_channels.append(result);
 }
 
-function callAjaxGetInfo(url) {
+function callAjaxGetInfo(url, key_api, channel, url_ajax) {
+	var url = "https://www.googleapis.com/youtube/v3/channels?key="+ key_api +"&part=snippet,statistics&id=" + channel;
+
 	$.ajax({
+		async: false,
        	type : "get",
        	dataType : "json",
        	url : url,
@@ -321,12 +445,16 @@ function callAjaxGetInfo(url) {
        		createHtmlShowInfo(response);
        	},
        	error: function( jqXHR, textStatus, errorThrown ){
-            console.log( 'The following error occured: ' + textStatus, errorThrown );
+       		error_key_api(key_api, jqXHR, url_ajax);
        	}
    });
 }
 
-function getInfoChannels() {
+function getInfoChannels(url_ajax) {
+	if ($('#list-channels').length == 0) {
+		return;
+	}
+
 	var channels = ($('#list-channels').val()).split(',');
 	var key_apis = ($('#list-key-apis').val()).split(',');
 	
@@ -335,9 +463,97 @@ function getInfoChannels() {
 			if (channels[i] != '') {
 				var url = "https://www.googleapis.com/youtube/v3/channels?key="+ key_apis[0] +"&part=snippet,statistics&id=" + channels[i];
 
-				callAjaxGetInfo(url);
+				callAjaxGetInfo(url, key_apis[0], channels[i], url_ajax);
 			}
 		}
 	}
 }
-	
+
+function getListVideos(id_channel, order, pageToken = '') {
+	var key_apis = ($('#list-key-apis').val()).split(',');
+	var result;
+	var results = [];
+	var i = 0;
+
+	while (true) {
+		var url = "https://www.googleapis.com/youtube/v3/search?key="+ key_apis[0] +"&part=id&maxResults=50&channelId=" + id_channel + "&order=" + order + "&pageToken=" + pageToken;
+
+		$.ajax({
+			async: false,
+	       	type : "get",
+	       	dataType : "json",
+	       	url : url,
+	       	beforeSend: function(){
+	       		
+	       	},
+	       	success: function(response) {
+	       		var next_page_token = response.nextPageToken;
+
+	       		pageToken = '';
+
+	       		if (next_page_token != undefined && next_page_token != '') {
+	       			pageToken = next_page_token;
+	       		}
+
+	       		result = getListVideoId(response);
+	       		results.push.apply(results, result);
+	       	},
+	       	error: function( jqXHR, textStatus, errorThrown ){
+	            console.log( 'The following error occured: ' + textStatus, errorThrown );
+	       	}
+	   	});
+
+	   	i++;
+
+		if (i >= 3 || pageToken == '')
+	   		break;
+	}
+
+	return results;
+}
+
+function getListVideoId(response) {
+	var items = response.items;
+	var id;
+	var result = [];
+
+	if (items.length > 0) {
+		for (var i = 0; i < items.length - 1; i++) {
+			if (items[i].id.videoId != undefined) {
+				id = items[i].id.videoId;
+
+				result.push(id);
+			}
+		}
+	}
+
+	return result;
+}
+
+function error_key_api(key_api, jqXHR, url_ajax) {
+	if (jqXHR.status == 403) {
+		setKeyLimit(key_api, url_ajax);
+	}
+}
+
+function setKeyLimit(key_api, url_ajax) {
+	$.ajax({
+		async: false,
+       	type : "get",
+       	dataType : "json",
+       	url : url_ajax,
+       	data: {
+       		'action': 'set_key_api_limit',
+       		'key_api': key_api
+       	},
+       	beforeSend: function(){
+       		
+       	},
+       	success: function(response) {
+       		location.reload();
+       	},
+       	error: function( jqXHR, textStatus, errorThrown ){
+       		
+       	}
+   });
+}

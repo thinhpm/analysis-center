@@ -48,10 +48,41 @@
 					<th>View Count</th>
 					<th>Subscriber Count</th>
 					<th>Hidden Subscriber Count</th>
+					<th>Link</th>
 					<th>Action</th>
 				</tr>
 			</table>
 		</div>
+		<div class="modal" id="myModal">
+		    <div class="modal-dialog">
+		      	<div class="modal-content">
+		      
+		        <!-- Modal Header -->
+		        	<div class="modal-header">
+		          		<h4 class="modal-title" style="text-align: center;">Detail</h4>
+		          		<button type="button" class="close" data-dismiss="modal">&times;</button>
+		        	</div>
+		        
+		        <!-- Modal body -->
+		        <div class="modal-body">
+		          	<table class="table-show-detail-video">
+						<tr>
+							<th>Stt</th>
+							<th>Title</th>
+							<th class="btn-order-list">View Count</th>
+							<th>Published At</th>
+							<th>Link</th>
+						</tr>
+					</table>
+		        </div>
+		        
+		        <!-- Modal footer -->
+		        <div class="modal-footer">
+		          	<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		        </div>
+	        
+	      	</div>
+    	</div>
 	</div>
 	<input type="hidden" id="list-channels" name="list-channels" value="<?php echo get_list_channel(); ?>">
 	<input type="hidden" id="list-key-apis" name="list-key-apis" value="<?php echo get_list_key_api(); ?>">
