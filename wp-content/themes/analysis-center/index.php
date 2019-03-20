@@ -19,7 +19,7 @@
  */
 
 get_header();
-
+filter_all_category_shopee();
 global $wpdb;
 // get_voucher();
 ?>
