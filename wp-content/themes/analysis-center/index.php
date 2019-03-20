@@ -42,9 +42,14 @@ global $wpdb;
 				<a href="https://pages.lazada.vn/wow/i/vn/LandingPage/flashsale?offer_id=8981&affiliate_id=182393&offer_name=VN+Desktop+Redirect_0&affiliate_name=nguyenduc&transaction_id=102f9854e28eeea61ddea19372a590&offer_ref=_xxvo0000000at0000&aff_source=" target="_blank">
 					<img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1jpB7o3HqK1RjSZFkXXX.WFXa.jpg_2200x2200q90.jpg_.webp">
 				</a>
-				<h2>Tiki Sắm tết huyền thoại</h2>
-				<a href="https://shorten.asia/RTa3Bfk1" target="_blank">
-					<img src="https://salt.tikicdn.com/ts/lp/a3/1c/85/15db38bccda4a0486100fc397b28fe3b.png">
+				<h2> Tiệc sinh nhật lazada</h2>
+				<a href="https://c.lazada.vn/t/c.ZiZs" target="_blank">
+					<img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1u8YcMxYaK1RjSZFnXXa80pXa.jpg_1200x1200Q100.jpg_.webp">
+				</a>
+				
+				<h2>Tiệc sinh nhật Tiki</h2>
+				<a href="https://shorten.asia/PN1SH2xU" target="_blank">
+					<img src="https://salt.tikicdn.com/cache/w1348/ts/lp/fc/c8/26/74200ffaa17fd174779cd312bd834a6c.jpg">
 				</a>
 				
 				<div class="tabs">
@@ -121,7 +126,7 @@ global $wpdb;
 
 						<?php
 						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 84 AND id_web = 3  ORDER BY `T`.`last_update` DESC LIMIT 100" );
+						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3  ORDER BY `T`.`last_update` DESC LIMIT 100" );
 
 						    foreach ( $results as $product )   {
 						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -239,15 +244,16 @@ global $wpdb;
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
 							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 84 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
-
+							
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 									$datetime2 = new DateTime($product->last_update);
 									$diff = $datetime1->diff($datetime2);
 
-									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 10){
 									    ?>
 										<?php 
+					
 											$class_item = '';
 
 											if ($product->status == 0) {
@@ -295,11 +301,11 @@ global $wpdb;
 			</div>
 		</main><!-- #main -->
 	</div><!-- #primary -->
-	<div class="sticky-banner">
+	<div class="sticky-banner left">
 		<a href="https://shorten.asia/S7G3uqkH" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/c9/a8/25/ff1bd60c6cdb77d4b248bb6ffed4d04f.png" alt="" width="60"></a>
 	</div>
-	<div class="sticky-banner left">
-		<a href="https://shorten.asia/rCZQTeKa" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/25/fe/11/04b47b494b8df77e37e294d44322adc0.png" alt="" width="60"></a>
+	<div class="sticky-banner">
+		<a href="https://shorten.asia/PN1SH2xU" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/b4/ad/a4/85ca5e4ca4df18ed9bfe787f0cc5a666.png" alt="" width="60"></a>
 	</div>
 	<div class="loading">
 		<div class="wap-loader">

@@ -742,7 +742,7 @@ function unescapeUTF8EscapeSeq($str) {
 function filter_all_category_shopee() {
 	ini_set('max_execution_time', '-1');
 	global $wpdb;
-	$percent = 81;
+	$percent = 80;
 	$numPage = 5000;
 	$idWeb = 2;
 
@@ -787,7 +787,6 @@ function filter_all_category_shopee() {
 				}
 			}
 		}
-
 	}
 
 	category_save_db($mainResult, $arrProductId);
@@ -955,12 +954,13 @@ function set_voucher() {
 function get_list_key_api() {
 	global $wpdb;
 	$result = '';
-	$apis = $wpdb->get_results ("SELECT key_api FROM key_apis WHERE `active` = true");
+	$apis = $wpdb->get_results ("SELECT key_api FROM key_apis WHERE `active` = true LIMIT 1");
 
 	if (!empty($apis)) {
-		foreach ($apis as $item) {
-			$result .= $item->key_api . ',';
-		}
+		// foreach ($apis as $item) {
+		// 	$result .= $item->key_api . ',';
+		// }
+		$result = $apis[0]->key_api;
 	}
 
 	return $result;
@@ -1121,6 +1121,18 @@ function remove_channel() {
 
 	$wpdb->get_results("DELETE FROM `channels` WHERE `id_channel`='" . $id_channel ."' AND `user`=" . $user_id);
 
+	wp_send_json(['success' => true]);
+	die;
+}
+
+add_action('wp_ajax_set_key_api_limit', 'set_key_api_limit');
+add_action('wp_ajax_nopriv_set_key_api_limit', 'set_key_api_limit');
+
+function set_key_api_limit() {
+	global $wpdb;
+	$key_api = $_GET['key_api'];
+
+	$wpdb->get_results("UPDATE `key_apis` SET `active` = 0 WHERE `key_api` = '" . $key_api . "'");
 	wp_send_json(['success' => true]);
 	die;
 }
