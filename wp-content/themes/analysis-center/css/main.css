@@ -573,4 +573,18 @@ footer a {
     cursor: pointer;
 }
 
+.btn-show-detail-channel:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+a:visited {
+	color: #337ab7;
+}
+@media (min-width: 1200px) {
+	.modal-dialog {
+	    width: 1200px !important;
+	    margin: 30px auto;
+	}
+}
 /* End Youbtube tool */
