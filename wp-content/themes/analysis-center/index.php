@@ -302,7 +302,7 @@ global $wpdb;
 		</main><!-- #main -->
 	</div><!-- #primary -->
 	<div class="sticky-banner left">
-		<a href="https://shorten.asia/S7G3uqkH" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/c9/a8/25/ff1bd60c6cdb77d4b248bb6ffed4d04f.png" alt="" width="60"></a>
+		<a href="https://shorten.asia/213KGCfx" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/7d/e3/ec/aa0db5bfdbe76ca4446a257ebdd46516.png" alt="" width="60"></a>
 	</div>
 	<div class="sticky-banner">
 		<a href="https://shorten.asia/PN1SH2xU" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/b4/ad/a4/85ca5e4ca4df18ed9bfe787f0cc5a666.png" alt="" width="60"></a>
