@@ -26,32 +26,39 @@ global $wpdb;
 	<div id="primary" class="content-area home-page">
 		<main id="main" class="site-main">
 			<div class="container">
-<!-- 				<div class="search-list">
+				
+				<div class="row mt30 banner">
+					<div class="col-md-8 banner-left">
+						<div class="row">
+							<div class="col-md-6">
+								<a href="https://shorten.asia/PN1SH2xU" target="_blank">
+									<img src="http://mgghot.com/wp-content/uploads/2019/03/tiki-bd.png">
+								</a>
+							</div>
+							<div class="col-md-6">
+								<a href="https://c.lazada.vn/t/c.ZiZs" target="_blank">
+									<img src="http://mgghot.com/wp-content/uploads/2019/03/bd-lzd.jpg">
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4 banner-right">
+						<div>
+							<a href="https://shorten.asia/W4V8hNBT" target="_blank"> <img src="http://mgghot.com/wp-content/uploads/2019/03/shopee-banner.png"/> </a>
+						</div>
+						<div class="mt30">
+							<a href="https://shorten.asia/sNSbj3B4" target="_blank">
+							<img src="https://bloggiamgia.vn/wp-content/uploads/2019/03/17027320184862-1.jpg" alt="adayroi">
+						</a>
+						</div>
+					</div>
+					<div class="col-md-12 mt30">
+						<a href="https://shorten.asia/bnjATUrB" target="_blank">
+							<img src="http://mgghot.com/wp-content/uploads/2018/11/f5g9k9.png" alt="sendo">
+						</a>
+					</div>
 				</div>
-				<iframe width="100%" height="35" src="https://lap.lazada.com/searchbar/searchbar.php?aff_id=182393&country=vn" frameborder="0" scrolling="no"></iframe> -->
-			</div>
-
-			<div class="container">
-				<h2 class="mt30"> Flashsale Shopee Freeship</h2>
-				<a href="https://shorten.asia/W4V8hNBT" target="_blank"> <img src="https://cf.shopee.vn/file/a44887606a8703255d56d15c249f03d2"/> </a>
-				<h2>flashSale Sendo với hàng ngàn sản phẩm giá trị</h2>
-				<a href="https://shorten.asia/bnjATUrB" target="_blank">
-					<img src="http://mgghot.com/wp-content/uploads/2018/11/f5g9k9.png" alt="sendo">
-				</a>
-				<h2>Flashsale Lazada khung giờ 12:00 và 00:00</h2>
-				<a href="https://pages.lazada.vn/wow/i/vn/LandingPage/flashsale?offer_id=8981&affiliate_id=182393&offer_name=VN+Desktop+Redirect_0&affiliate_name=nguyenduc&transaction_id=102f9854e28eeea61ddea19372a590&offer_ref=_xxvo0000000at0000&aff_source=" target="_blank">
-					<img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1jpB7o3HqK1RjSZFkXXX.WFXa.jpg_2200x2200q90.jpg_.webp">
-				</a>
-				<h2> Tiệc sinh nhật lazada</h2>
-				<a href="https://c.lazada.vn/t/c.ZiZs" target="_blank">
-					<img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1u8YcMxYaK1RjSZFnXXa80pXa.jpg_1200x1200Q100.jpg_.webp">
-				</a>
-				
-				<h2>Tiệc sinh nhật Tiki</h2>
-				<a href="https://shorten.asia/PN1SH2xU" target="_blank">
-					<img src="https://salt.tikicdn.com/cache/w1348/ts/lp/fc/c8/26/74200ffaa17fd174779cd312bd834a6c.jpg">
-				</a>
-				
+				<h2 class="ttl-h2"> Các Sản phẩm giảm giá nhiều tại </h2>
 				<div class="tabs">
 					<ul class="nav nav-tabs">
 					    <li class="active"><a data-toggle="tab" href="#lazada">Lazada</a></li>
@@ -62,12 +69,11 @@ global $wpdb;
 
 				  <div class="tab-content">
 				    <div id="lazada" class="tab-pane fade in active">
-				      <h2>Các Sản Phẩm Lazada Giảm giá nhiều nhất trong 2h qua</h2>
 						<div class="product-list">
 							<div class="row">
 
 							<?php
-							    $results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+							    $results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
 							//$results = [];
 							    foreach ( $results as $product )   {
 							     	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -120,20 +126,19 @@ global $wpdb;
 						</div>
 				    </div>
 				    <div id="tiki" class="tab-pane fade">
-				     <h2>Các Sản Phẩm Tiki Giảm giá nhiều nhất trong 2h qua</h2>
 					<div class="product-list">
 						<div class="row">
 
 						<?php
 						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3  ORDER BY `T`.`last_update` DESC LIMIT 100" );
+						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
 
 						    foreach ( $results as $product )   {
 						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 								$datetime2 = new DateTime($product->last_update);
 								$diff = $datetime1->diff($datetime2);
 
-								if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+								if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 4){
 								    ?>
 									<?php 
 										$class_item = '';
@@ -179,12 +184,11 @@ global $wpdb;
 					</div>
 				    </div>
 				    <div id="sendo" class="tab-pane fade">
-				      	<h2>Các Sản Phẩm Sendo Giảm giá nhiều nhất trong 2h qua</h2>
 				      	<div class="product-list">
 							<div class="row">
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-								$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 4 AND percent > 81 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+								$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 4 AND status = 1 AND percent > 81 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
 
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -237,7 +241,6 @@ global $wpdb;
 						</div>
 				    </div>
 				    <div id="shopee" class="tab-pane fade">
-				      	<h2>Các Sản Phẩm Shopee Giảm giá nhiều nhất trong 2h qua</h2>
 				      	<div class="product-list">
 							<div class="row">
 
