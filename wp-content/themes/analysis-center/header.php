@@ -29,7 +29,17 @@
 </head>
 
 <body <?php body_class(); ?>>
-<div id="page" class="site">
+	<div id="page" class="site">
+	<div class="swiper-container">
+	    <div class="swiper-wrapper">
+	      <div class="swiper-slide">
+	      	<a href="https://shorten.asia/qXVnzw9F"><img src="https://salt.tikicdn.com/ts/banner/df/79/ec/65a00debbe80967e15a81d66b15f9975.png" alt="#"></a>
+	      </div>
+	      <div class="swiper-slide">
+	      	<a href=""><img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1RXWfNNYaK1RjSZFnXXa80pXa.jpg" alt=""></a>
+	      </div>
+	    </div>
+	</div>
 	<div class="top-header">
 		<div class="container">
 			<p>Tham gia Group để cùng nhau chia sẽ về mã Giảm giá và mua hàng </p>

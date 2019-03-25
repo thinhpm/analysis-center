@@ -159,6 +159,7 @@ function analysis_center_scripts() {
 	wp_enqueue_style( 'analysis-center-style', get_stylesheet_uri() );
 	wp_enqueue_style( 'main-style', get_template_directory_uri().'/css/main.css');
 	wp_enqueue_style( 'vourcher.css', get_template_directory_uri().'/css/vourcher.css');
+	wp_enqueue_style( 'swiper.min.css', get_template_directory_uri().'/css/swiper.min.css');
 	wp_enqueue_style( 'font-Awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' );
 	wp_enqueue_style( 'bootstrapstyle', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' );
 
@@ -167,6 +168,7 @@ function analysis_center_scripts() {
 	wp_enqueue_script( 'analysis-center-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
 	
 	wp_enqueue_script( 'main.js', get_template_directory_uri() . '/js/main.js', array('jquery'),'1.0', true );
+	wp_enqueue_script( 'swiper.min.js', get_template_directory_uri() . '/js/swiper.min.js', array('jquery'),'1.0', true );
 	wp_enqueue_script( 'jquery.lazy.min.js', get_template_directory_uri() . '/js/jquery.lazy-master/jquery.lazy.min.js', array('jquery'),'1.0', true );
 	wp_enqueue_script( 'jquery.lazy.plugins.js', get_template_directory_uri() . '/js/jquery.lazy-master/jquery.lazy.plugins.js', array('jquery'),'1.0', true );
 	wp_enqueue_script( 'bootstrap.js', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js', array('jquery'),'1.0', true );

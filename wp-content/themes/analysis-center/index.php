@@ -32,7 +32,7 @@ global $wpdb;
 			</div>
 
 			<div class="container">
-				<h2> Flashsale Shopee Freeship</h2>
+				<h2 class="mt30"> Flashsale Shopee Freeship</h2>
 				<a href="https://shorten.asia/W4V8hNBT" target="_blank"> <img src="https://cf.shopee.vn/file/a44887606a8703255d56d15c249f03d2"/> </a>
 				<h2>flashSale Sendo với hàng ngàn sản phẩm giá trị</h2>
 				<a href="https://shorten.asia/bnjATUrB" target="_blank">
