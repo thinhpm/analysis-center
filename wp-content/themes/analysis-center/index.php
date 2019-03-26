@@ -164,10 +164,10 @@ global $wpdb;
 										?>
 										<div class="item">
 											<div class="images-product">
-												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
+												<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 											</div>
 											<h4 class="title-product">
-												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+												<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
 											</h4>
 											<div class="price-product">
 												<div class="original-price"><?php echo $product->original_price;?> Đ</div>
@@ -221,10 +221,10 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
-													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
+													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
