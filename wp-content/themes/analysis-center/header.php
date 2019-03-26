@@ -38,6 +38,12 @@
 	      <div class="swiper-slide">
 	      	<a href="" target="_blank"><img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1RXWfNNYaK1RjSZFnXXa80pXa.jpg" alt=""></a>
 	      </div>
+	      <div class="swiper-slide">
+	      	<a href="https://shorten.asia/BnvQKytR" target="_blank"><img src="https://salt.tikicdn.com/ts/banner/26/63/2b/459638dee1869327f22d267b3233a8a1.jpg" alt=""></a>
+	      </div>
+	      <div class="swiper-slide">
+	      	<a href="https://shorten.asia/Ysb6DZxs" target="_blank"><img src="https://salt.tikicdn.com/ts/banner/6b/30/4d/55cc51829458d57eba7c4cdae12891b3.png" alt=""></a>
+	      </div>
 	    </div>
 	</div>
 	<div class="top-header">
