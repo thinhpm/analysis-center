@@ -385,6 +385,44 @@ function get_post_new($atts, $content = null){
     return $list_post;
 }
 
+// get post new
+add_shortcode('get_post_blog','get_post_blog');
+
+function get_post_blog($atts, $content = null){
+    $wp_query = new WP_Query(array(
+        'post_type'      => 'post',
+        'order'          => 'desc',
+        'orderby'        => 'date',
+        'post_status'    => 'publish',
+        'posts_per_page'  => 4,
+        ));
+    ob_start();
+    if( $wp_query->have_posts() ):
+    echo '<div class="row blog">
+						<div class="col-md-3">';
+    while( $wp_query->have_posts() ): $wp_query->the_post();
+    ?>
+    <div class="item-blog">
+	    <a href="<?php the_permalink(); ?>" class="img-blog">
+	        <?php the_post_thumbnail(); ?>
+	    </a>
+	    <div class="content-blog">
+	        <h4 class="ttl-item"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+	        <p class="txt-blog"><?php echo wp_trim_words(get_the_content(),100,'...'); ?></p>
+	        <a rel="nofollow" target="_blank" href="<?php the_permalink(); ?>">Continue Reading</a>
+	    </div>
+	</div>
+    <?php
+    endwhile;
+    wp_reset_query();
+    echo '</div>';
+    echo '</div>';
+    endif;
+    $list_post = ob_get_contents();
+    ob_end_clean();
+    return $list_post;
+}
+
 
 function filter_all_category() {
 	global $wpdb;

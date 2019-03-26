@@ -302,6 +302,12 @@ global $wpdb;
 				  </div>
 				</div>
 			</div>
+			<section class="my-blog">
+				<div class="container">
+					<h2 class="ttl-blog">my blog</h2>
+					<?php echo do_shortcode('[get_post_blog]') ?>
+				</div>
+			</section>
 		</main><!-- #main -->
 	</div><!-- #primary -->
 	<div class="sticky-banner left">
