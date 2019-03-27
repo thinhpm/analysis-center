@@ -251,7 +251,7 @@ global $wpdb;
 
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 84 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 75 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
 							
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
