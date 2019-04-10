@@ -57,6 +57,11 @@ global $wpdb;
 							<img src="http://mgghot.com/wp-content/uploads/2018/11/f5g9k9.png" alt="sendo">
 						</a>
 					</div>
+					<div class="col-md-12 mt30">
+						<a href="https://c.lazada.vn/t/c.Zv95" target="_blank">
+							<img style="width: 100%" src="https://vn-live-02.slatic.net/p/dc453d93cc44ed05d474b817eafa6d69.jpg" alt="sendo">
+						</a>
+					</div>
 				</div>
 				<h2 class="ttl-h2"> Các Sản phẩm giảm giá nhiều tại </h2>
 				<div class="tabs">
@@ -164,10 +169,10 @@ global $wpdb;
 										?>
 										<div class="item">
 											<div class="images-product">
-												<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
+												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 											</div>
 											<h4 class="title-product">
-												<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
+												<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
 											</h4>
 											<div class="price-product">
 												<div class="original-price"><?php echo $product->original_price;?> Đ</div>
@@ -221,10 +226,10 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
-													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
@@ -246,7 +251,7 @@ global $wpdb;
 
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 84 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 75 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
 							
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -280,10 +285,10 @@ global $wpdb;
 											?>
 											<div class="item">
 												<div class="images-product">
-													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><img class="lazy-images" data-src="<?php echo $product->image_product;?>"></a>
 												</div>
 												<h4 class="title-product">
-													<a target="_blank" href="https://fast.accesstrade.com.vn/deep_link/4945784097639239041?url=<?php echo $product->link_product;?>"><?php echo $product->name_product;?></a>
+													<a target="_blank" href="<?php echo $product->link_product;?>?utm_source=accesstrade&aff_sid=vL8Ti5qxAg7LPCIeMU5e2aDnQEBIkkXrU2OzO1BLNqzhv22x"><?php echo $product->name_product;?></a>
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
