@@ -415,16 +415,26 @@ function getDetailByRespone(response) {
 	return results;
 }
 
-function createHtmlShowInfo(response) {
+function createHtmlShowInfo(response, channel) {
 	var table_channels = $('.table-show-indo-channels');
-	var id_channel = response.items[0].id;
-	var snippet = response.items[0].snippet;
-	var name_channel = snippet.title;
-	var statistics = response.items[0].statistics;
-	var view_count = statistics.viewCount;
-	var subscriber_count = statistics.subscriberCount;
-	var hidden_subscriber_count = statistics.hiddenSubscriberCount;
-	var video_count = statistics.videoCount;
+
+	if (response.items.length > 0) {
+		var id_channel = response.items[0].id;
+		var snippet = response.items[0].snippet;
+		var name_channel = snippet.title;
+		var statistics = response.items[0].statistics;
+		var view_count = statistics.viewCount;
+		var subscriber_count = statistics.subscriberCount;
+		var hidden_subscriber_count = statistics.hiddenSubscriberCount;
+		var video_count = statistics.videoCount;
+	} else {
+		var id_channel = channel;
+		var name_channel = '';
+		var view_count = 0000;
+		var subscriber_count = 0000;
+		var hidden_subscriber_count = false;
+		var video_count = 0000;
+	}
 
 	var result = "<tr>";
 	result +="<td class='btn-show-detail-channel' data-id='" + id_channel + "' data-name='" + name_channel + "'>" + name_channel + "</td>";
@@ -451,7 +461,7 @@ function callAjaxGetInfo(url, key_api, channel, url_ajax) {
        		
        	},
        	success: function(response) {
-       		createHtmlShowInfo(response);
+       		createHtmlShowInfo(response, channel);
        	},
        	error: function( jqXHR, textStatus, errorThrown ){
        		error_key_api(key_api, jqXHR, url_ajax);
