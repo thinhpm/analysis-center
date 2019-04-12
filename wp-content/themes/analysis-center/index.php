@@ -28,21 +28,21 @@ global $wpdb;
 			<div class="container">
 				
 				<div class="row mt30 banner">
-					<div class="col-md-8 banner-left">
+					<div class="col-md-9 banner-left">
 						<div class="row">
-							<div class="col-md-6">
-								<a href="https://shorten.asia/PN1SH2xU" target="_blank">
-									<img src="http://mgghot.com/wp-content/uploads/2019/03/tiki-bd.png">
+							<div class="col-md-5">
+								<a href="https://c.lazada.vn/t/c.0VC7" target="_blank">
+									<img src="https://vn-live-02.slatic.net/p/c91e8f019d65884469d5c9d9888f8b6e.jpg">
 								</a>
 							</div>
-							<div class="col-md-6">
+							<div class="col-md-7">
 								<a href="https://c.lazada.vn/t/c.ZiZs" target="_blank">
-									<img src="http://mgghot.com/wp-content/uploads/2019/03/bd-lzd.jpg">
+									<img src="https://salt.tikicdn.com/ts/banner/35/a2/22/646708a572b0ab8801fe16cf3a4d5e80.jpg">
 								</a>
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4 banner-right">
+					<div class="col-md-3 banner-right">
 						<div>
 							<a href="https://shorten.asia/W4V8hNBT" target="_blank"> <img src="http://mgghot.com/wp-content/uploads/2019/03/shopee-banner.png"/> </a>
 						</div>
@@ -57,9 +57,14 @@ global $wpdb;
 							<img src="http://mgghot.com/wp-content/uploads/2018/11/f5g9k9.png" alt="sendo">
 						</a>
 					</div>
-					<div class="col-md-12 mt30">
-						<a href="https://c.lazada.vn/t/c.Zv95" target="_blank">
-							<img style="width: 100%" src="https://vn-live-02.slatic.net/p/dc453d93cc44ed05d474b817eafa6d69.jpg" alt="sendo">
+					<div class="col-md-8 mt30">
+						<a href="https://c.lazada.vn/t/c.03TQ" target="_blank">
+							<img src="https://vn-live-02.slatic.net/p/5a03dc13fef0f2f0cad4314e1f28a97f.jpg" alt="sendo">
+						</a>
+					</div>
+					<div class="col-md-4 mt30">
+						<a href="https://c.lazada.vn/t/c.0UPy" target="_blank">
+							<img src="https://vn-live-02.slatic.net/p/900e3243c3cd1209669e898bdf918553.jpg" alt="sendo">
 						</a>
 					</div>
 				</div>
