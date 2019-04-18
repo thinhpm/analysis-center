@@ -36,7 +36,7 @@ global $wpdb;
 								</a>
 							</div>
 							<div class="col-md-7">
-								<a href="https://c.lazada.vn/t/c.ZiZs" target="_blank">
+								<a href="https://shorten.asia/MVM47uJc" target="_blank">
 									<img src="https://salt.tikicdn.com/ts/banner/35/a2/22/646708a572b0ab8801fe16cf3a4d5e80.jpg">
 								</a>
 							</div>
@@ -123,7 +123,7 @@ global $wpdb;
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-													<div class="price"><?php echo $product->price;?> Đ</td></div>
+													<div class="price"><?php echo $product->price;?> Đ</div>
 												</div>
 												<div class="percent"><?php echo $product->percent;?>%</div>
 												<div class="last-update"><?php echo $product->last_update ;?></div>
@@ -141,7 +141,7 @@ global $wpdb;
 
 						<?php
 						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 85 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
 
 						    foreach ( $results as $product )   {
 						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -181,7 +181,7 @@ global $wpdb;
 											</h4>
 											<div class="price-product">
 												<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-												<div class="price"><?php echo $product->price;?> Đ</td></div>
+												<div class="price"><?php echo $product->price;?> Đ</div>
 											</div>
 											<div class="percent"><?php echo $product->percent;?>%</div>
 											<div class="last-update"><?php echo $product->last_update ;?></div>
@@ -238,7 +238,7 @@ global $wpdb;
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-													<div class="price"><?php echo $product->price;?> Đ</td></div>
+													<div class="price"><?php echo $product->price;?> Đ</div>
 												</div>
 												<div class="percent"><?php echo $product->percent;?>%</div>
 												<div class="last-update"><?php echo $product->last_update ;?></div>
@@ -256,14 +256,14 @@ global $wpdb;
 
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 75 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 60 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
 							
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 									$datetime2 = new DateTime($product->last_update);
 									$diff = $datetime1->diff($datetime2);
 
-									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 10){
+									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 5){
 									    ?>
 										<?php 
 					
@@ -297,7 +297,7 @@ global $wpdb;
 												</h4>
 												<div class="price-product">
 													<div class="original-price"><?php echo $product->original_price;?> Đ</div>
-													<div class="price"><?php echo $product->price;?> Đ</td></div>
+													<div class="price"><?php echo $product->price;?> Đ</div>
 												</div>
 												<div class="percent"><?php echo $product->percent;?>%</div>
 												<div class="last-update"><?php echo $product->last_update ;?></div>
