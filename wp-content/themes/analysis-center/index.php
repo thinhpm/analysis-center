@@ -31,8 +31,8 @@ global $wpdb;
 					<div class="col-md-9 banner-left">
 						<div class="row">
 							<div class="col-md-5">
-								<a href="https://c.lazada.vn/t/c.0VC7" target="_blank">
-									<img src="https://vn-live-02.slatic.net/p/c91e8f019d65884469d5c9d9888f8b6e.jpg">
+								<a href="https://c.lazada.vn/t/c.02sp" target="_blank">
+									<img src="https://vn-live-02.slatic.net/p/7194e71c3a351660b03f0b3c2df037d5.jpg">
 								</a>
 							</div>
 							<div class="col-md-7">
@@ -58,8 +58,8 @@ global $wpdb;
 						</a>
 					</div>
 					<div class="col-md-8 mt30">
-						<a href="https://c.lazada.vn/t/c.03TQ" target="_blank">
-							<img src="https://vn-live-02.slatic.net/p/5a03dc13fef0f2f0cad4314e1f28a97f.jpg" alt="sendo">
+						<a href="https://c.lazada.vn/t/c.02sK" target="_blank">
+							<img src="https://vn-live-02.slatic.net/p/5a01b84ba4594b4ce8903c8641d07c42.jpg" alt="sendo">
 						</a>
 					</div>
 					<div class="col-md-4 mt30">
@@ -141,7 +141,7 @@ global $wpdb;
 
 						<?php
 						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 85 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
 
 						    foreach ( $results as $product )   {
 						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
