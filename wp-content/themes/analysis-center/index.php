@@ -335,7 +335,31 @@ global $wpdb;
 	</div>
 	<input type="hidden" id="ads-google" value="" name="ads-google">
 	<input type="hidden" id="url-ajax" value="<?php echo admin_url('admin-ajax.php');?>" name="url-ajax">
-	
+		<div id="myModal" class="modal fade quangcao" role="dialog">
+		  	<div class="modal-dialog">
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal">&times;</button>
+		        <h4 class="modal-title">Một Giây Quảng Cáo</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>Trang web này đã xuất hiện quảng cáo<br>
+		        	Không có tiền thì web hoạt động làm sao.</p>
+		        	<p class="red"><strong>Click Banner dưới ủng hộ web nha</strong></p>
+		        	<p>
+		        		<a href="https://shorten.asia/j4cvqGwj" target="_blank">
+							<img src="https://salt.tikicdn.com/cache/w584/ts/banner/a8/a9/48/e2133b84c135001f59f65cea1e749107.jpg">
+						</a>
+		        	</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+	    </div>
+
+  </div>
+</div>
 <?php
 
 	// <h1 style="color:red;margin: 200px 0;text-align: center;">We need fix some features. Our website will coming soon!</h1>

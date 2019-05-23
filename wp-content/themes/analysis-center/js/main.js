@@ -1,3 +1,8 @@
+$(document).ready(function() {       
+   $('#myModal').modal('show');
+    }); 
+
+
 $(document).ready(function() {
 	var swiper = new Swiper('.swiper-container', {
       spaceBetween: 30,
@@ -576,3 +581,9 @@ function setKeyLimit(key_api, url_ajax) {
        	}
    });
 }
+
+
+
+
+
+

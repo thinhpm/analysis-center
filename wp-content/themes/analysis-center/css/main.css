@@ -699,3 +699,18 @@ a:visited {
 		font-size: 11px;
 	}
 }
+
+.quangcao .modal-dialog {
+	width: 50%!important;
+	margin: 0 auto;
+	margin-top: 30px;
+}
+.quangcao .modal-dialog .modal-body{
+	text-align: center;
+}
+.red {
+	color: red;
+}
+a:hover {
+	cursor: pointer;
+}
