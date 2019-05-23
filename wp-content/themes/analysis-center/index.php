@@ -22,6 +22,8 @@ get_header();
 
 global $wpdb;
 // get_voucher();
+
+// if(is_user_logged_in()) {
 ?>
 	<div id="primary" class="content-area home-page">
 		<main id="main" class="site-main">
@@ -31,13 +33,13 @@ global $wpdb;
 					<div class="col-md-9 banner-left">
 						<div class="row">
 							<div class="col-md-5">
-								<a href="https://c.lazada.vn/t/c.02sp" target="_blank">
-									<img src="https://vn-live-02.slatic.net/p/7194e71c3a351660b03f0b3c2df037d5.jpg">
+								<a href="https://shorten.asia/XvvEU8QQ" target="_blank">
+									<img src="https://vn-live-02.slatic.net/p/db409eae3c83e8f9780e5c762a5c04e1.jpg">
 								</a>
 							</div>
 							<div class="col-md-7">
-								<a href="https://shorten.asia/MVM47uJc" target="_blank">
-									<img src="https://salt.tikicdn.com/ts/banner/35/a2/22/646708a572b0ab8801fe16cf3a4d5e80.jpg">
+								<a href="https://shorten.asia/j4cvqGwj" target="_blank">
+									<img src="https://salt.tikicdn.com/cache/w584/ts/banner/a8/a9/48/e2133b84c135001f59f65cea1e749107.jpg">
 								</a>
 							</div>
 						</div>
@@ -58,13 +60,13 @@ global $wpdb;
 						</a>
 					</div>
 					<div class="col-md-8 mt30">
-						<a href="https://c.lazada.vn/t/c.02sK" target="_blank">
-							<img src="https://vn-live-02.slatic.net/p/5a01b84ba4594b4ce8903c8641d07c42.jpg" alt="sendo">
+						<a href="https://shorten.asia/8Y4JP79G" target="_blank">
+							<img style="width: 100%;" src="https://vn-live-02.slatic.net/p/b85877c3f8529a50921e7857728a1e63.jpg" alt="lzd">
 						</a>
 					</div>
 					<div class="col-md-4 mt30">
-						<a href="https://c.lazada.vn/t/c.0UPy" target="_blank">
-							<img src="https://vn-live-02.slatic.net/p/900e3243c3cd1209669e898bdf918553.jpg" alt="sendo">
+						<a href="https://shorten.asia/t4SVJxee" target="_blank">
+							<img style="width: 100%; max-height: 212px;" src="https://vn-live-02.slatic.net/p/900e3243c3cd1209669e898bdf918553.jpg" alt="sendo">
 						</a>
 					</div>
 				</div>
@@ -83,14 +85,14 @@ global $wpdb;
 							<div class="row">
 
 							<?php
-							    $results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 79 AND id_web = 1 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+							    $results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web = 1 AND status = 1 AND percent > 69 AND DATEDIFF(CURRENT_DATE, last_update) < 2 ORDER BY `products`.`percent` DESC" );
 							//$results = [];
 							    foreach ( $results as $product )   {
 							     	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 									 $datetime2 = new DateTime($product->last_update);
 									 $diff = $datetime1->diff($datetime2);
 
-									 if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 5){
+									 if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
 									    ?>
 										<?php 
 											$class_item = '';
@@ -141,14 +143,14 @@ global $wpdb;
 
 						<?php
 						    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-						$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products ORDER BY last_update) T WHERE percent > 80 AND id_web = 3 AND status = 1 ORDER BY `T`.`last_update` DESC LIMIT 100" );
+						$results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web = 3 AND status = 1 AND percent > 80 AND DATEDIFF(CURRENT_DATE, last_update) < 2 ORDER BY `products`.`percent` DESC" );
 
 						    foreach ( $results as $product )   {
 						    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 								$datetime2 = new DateTime($product->last_update);
 								$diff = $datetime1->diff($datetime2);
 
-								if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 4){
+								if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 10){
 								    ?>
 									<?php 
 										$class_item = '';
@@ -198,14 +200,14 @@ global $wpdb;
 							<div class="row">
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-								$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 4 AND status = 1 AND percent > 81 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+								$results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web = 4 AND status = 1 AND percent > 59 AND DATEDIFF(CURRENT_DATE, last_update) < 2 ORDER BY `products`.`percent` DESC" );
 
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
 									$datetime2 = new DateTime($product->last_update);
 									$diff = $datetime1->diff($datetime2);
 
-									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 2){
+									if($diff->y == 0 && $diff->m == 0 && $diff->d == 0 && $diff->h < 10){
 									    ?>
 										<?php 
 											$class_item = '';
@@ -256,7 +258,7 @@ global $wpdb;
 
 							<?php
 							    // $results = $wpdb->get_results ( "SELECT * FROM products WHERE `id_web`= 3 and `percent` > 80 ORDER BY `percent` DESC LIMIT 500" );
-							$results = $wpdb->get_results ( "SELECT * FROM (SELECT * FROM products WHERE id_web = 2 AND percent > 60 ORDER BY last_update DESC LIMIT 500) T ORDER BY `T`.`percent` DESC LIMIT 100" );
+							$results = $wpdb->get_results ( "SELECT * FROM products WHERE id_web = 2 AND status = 1 AND percent > 60 AND DATEDIFF(CURRENT_DATE, last_update) < 2 ORDER BY `products`.`percent` DESC" );
 							
 							    foreach ( $results as $product )   {
 							    	$datetime1 = new DateTime(date("Y-m-d H:i:s"));
@@ -320,11 +322,11 @@ global $wpdb;
 			</section>
 		</main><!-- #main -->
 	</div><!-- #primary -->
-	<div class="sticky-banner left">
+	<!-- <div class="sticky-banner left">
 		<a href="https://shorten.asia/213KGCfx" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/7d/e3/ec/aa0db5bfdbe76ca4446a257ebdd46516.png" alt="" width="60"></a>
-	</div>
+	</div> -->
 	<div class="sticky-banner">
-		<a href="https://shorten.asia/PN1SH2xU" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/b4/ad/a4/85ca5e4ca4df18ed9bfe787f0cc5a666.png" alt="" width="60"></a>
+		<a href="https://shorten.asia/PX6U3UpZ" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/84/55/14/69b05245624c51ecc8f882b72ea259cd.png" alt="" width="60"></a>
 	</div>
 	<div class="loading">
 		<div class="wap-loader">
@@ -335,4 +337,7 @@ global $wpdb;
 	<input type="hidden" id="url-ajax" value="<?php echo admin_url('admin-ajax.php');?>" name="url-ajax">
 	
 <?php
+
+	// <h1 style="color:red;margin: 200px 0;text-align: center;">We need fix some features. Our website will coming soon!</h1>
+
 get_footer();

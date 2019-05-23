@@ -448,16 +448,18 @@ function filter_all_category() {
 			$data = file_get_contents('https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc');
 			preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
 
+			
 			if(count($output_array[0]) == 0 || $stt == $numPage){
 				break;
 			}
-
+			
 			foreach($output_array[0] as $value){
+				
 				$arrResult = [];
 				$discount = getValueOf($value, 'discount');
 				$discount = str_replace('-', '', $discount);
 				$discount = str_replace('%', '', $discount);
-
+				
 				if ($discount >= $percent) {
 					$name = getValueOf($value, 'name');
 					$id_product = getValueOf($value, 'itemId');
@@ -484,14 +486,16 @@ function filter_all_category() {
 					array_push($mainResult, $arrResult);
 
 				}
+				
 			}
 
 			$stt++;
+			
 		}
-
+		
 
 		category_save_db($mainResult, $arrProductId);
-
+		
 	}
 }
 
@@ -699,7 +703,7 @@ add_action('wp_ajax_nopriv_api_v1_lazada_set_db', 'api_v1_lazada_set_db');
 
 function api_v1_lazada_set_db() {
 	global $wpdb;
-	$idWeb = 1;
+	$idWeb = $_GET['id_web'];
 
 	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
 	$arrayData = [];
@@ -782,8 +786,8 @@ function unescapeUTF8EscapeSeq($str) {
 function filter_all_category_shopee() {
 	ini_set('max_execution_time', '-1');
 	global $wpdb;
-	$percent = 80;
-	$numPage = 5000;
+	$percent = 1;
+	$numPage = 200;
 	$idWeb = 2;
 
 	$mainResult = [];
@@ -807,13 +811,13 @@ function filter_all_category_shopee() {
 
 		for ($i = 0; $i <= $numPage; $i += 50) {
 			$url = "https://shopee.vn/api/v2/search_items/?by=price&limit=50&match_id=" . $category_id . "&newest=" . $i . "&order=asc&page_type=search&rating_filter=1";
-
+			
 			$data = file_get_contents($url, false, $context);
 
 			$list_item = json_decode($data);
 
 			$list_item = $list_item->items;
-
+			
 			foreach ($list_item as $item) {
 				$arrResult = [];
 				$discount = $item->discount;
@@ -826,9 +830,12 @@ function filter_all_category_shopee() {
 					array_push($mainResult, $arrResult);
 				}
 			}
-		}
-	}
 
+		}
+		break;
+		
+	}
+	print_r($mainResult);
 	category_save_db($mainResult, $arrProductId);
 }
 
@@ -1175,4 +1182,22 @@ function set_key_api_limit() {
 	$wpdb->get_results("UPDATE `key_apis` SET `active` = 0 WHERE `key_api` = '" . $key_api . "'");
 	wp_send_json(['success' => true]);
 	die;
+}
+
+add_action('wp_ajax_api_v1_get_category', 'api_v1_get_category');
+add_action('wp_ajax_nopriv_api_v1_get_category', 'api_v1_get_category');
+
+function api_v1_get_category() {
+	global $wpdb;
+	$results = '';
+	$idWeb = $_GET['id_web'];
+	
+	$category = $wpdb->get_results ("SELECT id_category FROM categories WHERE id_web=" . $idWeb);
+
+	if (!empty($category)) {
+		foreach ($category as $item) {
+			$results .= $item->id_category . ',';
+		}
+	}
+	wp_send_json($results);
 }
