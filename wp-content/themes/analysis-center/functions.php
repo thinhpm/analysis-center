@@ -1011,6 +1011,24 @@ function get_list_key_api() {
 	}
 
 	return $result;
+<<<<<<< HEAD
+=======
+}
+
+function get_list_access_token() {
+	global $wpdb;
+	$result = '';
+	$apis = $wpdb->get_results ("SELECT access_token FROM access_tokens WHERE `active` = true LIMIT 1");
+
+	if (!empty($apis)) {
+		// foreach ($apis as $item) {
+		// 	$result .= $item->key_api . ',';
+		// }
+		$result = $apis[0]->access_token;
+	}
+
+	return $result;
+>>>>>>> update facebook tool
 }
 
 function get_list_channel() {
@@ -1033,6 +1051,32 @@ function get_list_channel() {
 		}
 
 		return $result;
+<<<<<<< HEAD
+=======
+	}
+}
+
+function get_list_page() {
+	global $wpdb;
+
+	$result = '';
+	$user_name = $_SESSION["user_name"];
+	$ids = $wpdb->get_results ("SELECT id FROM user_for_youtube WHERE `user_name`='" . $user_name . "'");
+
+	if (!empty($ids)) {
+		$id_user = $ids[0]->id;
+		$_SESSION['user_id'] = $id_user;
+
+		$channels = $wpdb->get_results("SELECT page_id FROM facebook_pages WHERE `user`='" . $id_user . "'");
+
+		if (!empty($channels)) {
+			foreach ($channels as $item) {
+				$result .= $item->page_id . ',';
+			}
+		}
+
+		return $result;
+>>>>>>> update facebook tool
 	}
 }
 
@@ -1082,6 +1126,84 @@ function get_info_channel($id_channel) {
 			'video_count' => $video_count,
 			'id_channel' => $id_channel
 		];
+	}
+
+	return [];
+}
+
+function get_info_page($page_id, $total_day = 1) {
+	$results = [];
+	ini_set('max_execution_time', '-1');
+	$arrContextOptions=array(
+	    "ssl"=>array(
+	        "verify_peer"=>false,
+	        "verify_peer_name"=>false,
+	    ),
+	);  
+
+	$opts = [
+	    "http" => [
+	        "method" => "GET",
+	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+	    ]
+	];
+
+	$context = stream_context_create($opts);
+
+	$access_token = get_list_access_token();
+
+	if (!empty($access_token)) {
+		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+
+		$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
+
+		$list_item = json_decode($response);
+		$page_like = $list_item->fan_count;
+		$datas = $list_item->feed->data;
+		$result = [];
+		
+		foreach ($datas as $item) {
+			$time_now = time();
+			$your_date = strtotime($item->created_time);
+			$datediff = $time_now - $your_date;
+
+			$datediff =  round($datediff/(60*60*24));
+
+			if ($datediff < $total_day) {
+				$message = $item->message;
+				$post_id = $item->id;
+
+				$reactions_haha = $item->reactions_haha->summary->total_count;
+				$reactions_wow = $item->reactions_wow->summary->total_count;
+				$reactions_sad = $item->reactions_sad->summary->total_count;
+				$reactions_total = $item->reactions_total->summary->total_count;
+
+				$likes = !empty($item->likes) ? $item->likes->count : 0;
+				$shares = !empty($item->shares) ? $item->shares->count : 0;
+
+				$arr = [
+					'post_id' => $post_id,
+					'message' => $message,
+					'likes' => $likes,
+					'shares' => $shares,
+					'reactions_haha' => $reactions_haha,
+					'reactions_wow' => $reactions_wow,
+					'reactions_sad' => $reactions_sad,
+					'reactions_total' => $reactions_total
+				];
+
+				array_push($result, $arr);
+			}
+		}
+
+		$arr2 = [
+			'page_like' => $page_like,
+			'datas' => $result
+		];
+
+		array_push($results, $arr2);
+		
+		return $results;
 	}
 
 	return [];
