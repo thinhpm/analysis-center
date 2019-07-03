@@ -314,7 +314,7 @@ function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 
 function checkLogin(url_ajax, url_redirect) {
 	var user_name = $('#user-name').val();
-	var password = $('#password').val();
+	var password = $('.password-social').val();
 
 	$.ajax({
        	type : "get",
