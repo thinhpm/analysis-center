@@ -981,6 +981,7 @@ function set_voucher() {
 	$time_out = $_POST['date_exp'];
 	$name_cate = $_POST['name_cate'];
 	$website = $_POST['website'];
+	
 
 	$arr_id_coupon = $wpdb->get_results ("SELECT id_coupon FROM voucher WHERE website='" . $website . "'");
 
@@ -1011,8 +1012,6 @@ function get_list_key_api() {
 	}
 
 	return $result;
-<<<<<<< HEAD
-=======
 }
 
 function get_list_access_token() {
@@ -1028,7 +1027,6 @@ function get_list_access_token() {
 	}
 
 	return $result;
->>>>>>> update facebook tool
 }
 
 function get_list_channel() {
@@ -1051,8 +1049,6 @@ function get_list_channel() {
 		}
 
 		return $result;
-<<<<<<< HEAD
-=======
 	}
 }
 
@@ -1076,7 +1072,6 @@ function get_list_page() {
 		}
 
 		return $result;
->>>>>>> update facebook tool
 	}
 }
 
