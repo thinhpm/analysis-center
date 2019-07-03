@@ -31,7 +31,7 @@ get_header();
 	<h1 class="title-voucher">Mã giảm giá <?php echo $website ?>, Voucher <?php echo $website ?> khuyến mãi HOT tháng <?php echo date("m/Y") ?></h1>
 	<div class="store-listings st-list-coupons" style="padding: 0 50px">
 		<?php 
-			$lists = $wpdb->get_results("SELECT * FROM voucher WHERE `website`='" . $website . "'");
+			$lists = $wpdb->get_results("SELECT * FROM voucher WHERE `website`='" . $website . "' AND `status` = 1");
 			$list_category = $wpdb->get_results("SELECT DISTINCT name_cate FROM voucher WHERE `website`='" . $website . "'");
 			$stt = 0;
 

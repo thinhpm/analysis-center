@@ -1,6 +1,6 @@
 $(document).ready(function() {       
-   $('#myModal').modal('show');
-    }); 
+   // $('#myModal').modal('show');
+}); 
 
 
 $(document).ready(function() {
@@ -232,13 +232,15 @@ $(document).ready(function() {
        });
 	});
 
-	$(document).on("click", "#btn-login-youtube", function(e) {
-		checkLogin(url_ajax);
+	$(document).on("click", ".btn-login-social", function(e) {
+		var url_redirect = $('#url-redirect').val();
+		checkLogin(url_ajax, url_redirect);
 	});
 
-	$(document).on("keypress", "#password", function(e) {
+	$(document).on("keypress", ".password-social", function(e) {
 		if (e.keyCode == 13) {
-			checkLogin(url_ajax);
+			var url_redirect = $('#url-redirect').val();
+			checkLogin(url_ajax, url_redirect);
 		}
 	});
 
@@ -310,7 +312,7 @@ function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 	}
 }
 
-function checkLogin(url_ajax) {
+function checkLogin(url_ajax, url_redirect) {
 	var user_name = $('#user-name').val();
 	var password = $('#password').val();
 
@@ -328,7 +330,7 @@ function checkLogin(url_ajax) {
        	},
        	success: function(response) {
        		if (response.status) {
-       			location.href = "youtuber";
+       			location.href = url_redirect;
        		} else {
            		alert("Login fail");
        		}
