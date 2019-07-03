@@ -312,11 +312,7 @@ function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 	}
 }
 
-<<<<<<< HEAD
-function checkLogin(url_ajax) {
-=======
 function checkLogin(url_ajax, url_redirect) {
->>>>>>> update facebook tool
 	var user_name = $('#user-name').val();
 	var password = $('#password').val();
 
