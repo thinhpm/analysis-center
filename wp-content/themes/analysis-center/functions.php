@@ -1235,6 +1235,8 @@ function get_info_detail_page($page_id, $total_day = 1) {
 				$likes = !empty($item->likes) ? $item->likes->count : 0;
 				$shares = !empty($item->shares) ? $item->shares->count : 0;
 				$total_point = $shares*$point_share + $comments*$point_comment + $reactions_total*$point_other;
+				$created_time = date_create($item->created_time);
+				$created_time = date_format($created_time,"Y/m/d H:i:s");
 
 				$arr = [
 					'post_id' => $post_id,
@@ -1246,7 +1248,8 @@ function get_info_detail_page($page_id, $total_day = 1) {
 					'reactions_wow' => $reactions_wow,
 					'reactions_sad' => $reactions_sad,
 					'reactions_total' => $reactions_total,
-					'total_point' => $total_point
+					'total_point' => $total_point,
+					'created_time' => $created_time
 				];
 
 				array_push($result, $arr);

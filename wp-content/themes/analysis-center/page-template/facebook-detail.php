@@ -36,15 +36,7 @@
 	<div class="main">
 		<div class="container">
 			<div class="add-channel">
-				<div class="dropdown">
-				  	<span class="dropbtn">Add page</span>
-				  	<div id="myDropdown" class="dropdown-content">
-				  		<div class="warrap-add-channel">
-					    	<input type="tet" name="add-page">
-					    	<button>Add</button>
-				  		</div>
-				 	 </div>
-				</div>
+				<h2></h2>
 			</div>
 
 			<table>
@@ -54,6 +46,7 @@
 					<th>Like Count</th>
 					<th>Share Count</th>
 					<th>Comments Count</th>
+					<th>Public At</th>
 					<th>Total Reactions</th>
 					<th>Link</th>
 				</tr>
@@ -74,8 +67,9 @@
 								<td><?php echo $item['likes'] ?></td>
 								<td><?php echo $item['shares'] ?></td>
 								<td><?php echo $item['comments'] ?></td>
+								<td><?php echo $item['created_time'] ?></td>
 								<td><?php echo $item['reactions_total'] ?></td>
-								<td><a href="https://facebook.com/<?php echo $item['post_id'] ?>">Click</a></td>
+								<td><a target="_blank" href="https://facebook.com/<?php echo $item['post_id'] ?>">Click</a></td>
 							</tr>
 
 							<?php
