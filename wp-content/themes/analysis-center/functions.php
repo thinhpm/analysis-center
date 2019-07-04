@@ -1178,6 +1178,10 @@ function get_info_page($pages) {
 
 function get_info_detail_page($page_id, $total_day = 1) {
 	$result = [];
+	$point_share = 3;
+	$point_comment = 2;
+	$point_other = 1;
+
 	ini_set('max_execution_time', '-1');
 	$arrContextOptions=array(
 	    "ssl"=>array(
@@ -1198,7 +1202,7 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	$access_token = get_list_access_token();
 
 	if (!empty($access_token)) {
-		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
 
 		$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
 
@@ -1220,7 +1224,8 @@ function get_info_detail_page($page_id, $total_day = 1) {
 				$message = $item->message;
 				$post_id = $item->id;
 
-				$comments = $item->comments->count;
+				// $comments = $item->comments->count;
+				$comments = 0;
 
 				$reactions_haha = $item->reactions_haha->summary->total_count;
 				$reactions_wow = $item->reactions_wow->summary->total_count;
@@ -1229,6 +1234,7 @@ function get_info_detail_page($page_id, $total_day = 1) {
 
 				$likes = !empty($item->likes) ? $item->likes->count : 0;
 				$shares = !empty($item->shares) ? $item->shares->count : 0;
+				$total_point = $shares*$point_share + $comments*$point_comment + $reactions_total*$point_other;
 
 				$arr = [
 					'post_id' => $post_id,
@@ -1239,7 +1245,8 @@ function get_info_detail_page($page_id, $total_day = 1) {
 					'reactions_haha' => $reactions_haha,
 					'reactions_wow' => $reactions_wow,
 					'reactions_sad' => $reactions_sad,
-					'reactions_total' => $reactions_total
+					'reactions_total' => $reactions_total,
+					'total_point' => $total_point
 				];
 
 				array_push($result, $arr);
@@ -1248,6 +1255,17 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	}
 
 	return $result;
+}
+
+function sort_list_post($datas, $sort_by) {
+	if ($sort_by == 'popular') {
+		$total_point = array_column($datas, 'total_point');
+		array_multisort($total_point, SORT_DESC, $datas);
+
+		return $datas;
+	}
+
+	return $datas;
 }
 
 add_action('init', 'myStartSession', 1);

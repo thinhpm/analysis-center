@@ -58,7 +58,10 @@
 					<th>Link</th>
 				</tr>
 			<?php
-				$results = get_info_detail_page($_GET["pageId"]);
+				$page_id = $_GET["pageId"];
+				$sort_by = $_GET["sortBy"];
+				$datas = get_info_detail_page($page_id);
+				$results = sort_list_post($datas, $sort_by);
 
 				if (!empty($results)) {
 					$stt = 1;
