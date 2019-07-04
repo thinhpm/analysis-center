@@ -295,7 +295,35 @@ $(document).ready(function() {
 
 	getInfoChannels(url_ajax);
 
+	// FACEBOOK
+
 });
+
+function showListPostByOrder(page_id, url_ajax) {
+	var modal_title = $('#modal-page .modal-title');
+	var modal_body = $('#modal-page .modal-body tr.item');
+
+	$.ajax({
+       	type : "get",
+       	dataType : "json",
+       	url : url_ajax, 
+       	data : {
+            action: "get_info_detail_by_api",
+            page_id: page_id
+       	},
+       	beforeSend: function(){
+       		
+       	},
+       	success: function(response) {
+       		console.dir(response);
+       	},
+       	error: function( jqXHR, textStatus, errorThrown ){
+            console.error( 'The following error occured: ' + textStatus, errorThrown );
+       	}
+   });
+
+
+}
 
 function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 	var modal_title = $('#myModal .modal-title');

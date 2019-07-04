@@ -324,8 +324,7 @@ global $wpdb;
 
 
 				<?php } else { ?>
-					<h1 style="color:red;margin: 200px 0;text-align: center;">Ồ. Mấy con cờ hó trộm link nhiều quá mình tìm cách khóa mõm cái đã nhé. Có lỗi giá mọi người sẽ được thông báo ở Group. Cám ơn những người anh em thiện lành.
-						<p style="font-size: 16px; text-align: right;margin-top: 50px;">Một phút bực mình các bạn thông cảm</p></h1>
+					<h1 style="color:red;margin: 200px 0;text-align: center;">Sếp kêu em bảo trì thì em bảo trì thôi!</h1>
 						<div id="shopee" class="">
 							<h2>Shopee</h2>
 				      	<div class="product-list">

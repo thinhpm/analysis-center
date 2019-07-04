@@ -1,6 +1,6 @@
 <?php 
 /**
- * Template Name: youtube
+ * Template Name: facebook detail
  *
  * @package WordPress
  * @subpackage Twenty_Fourteen
@@ -18,43 +18,73 @@
  *
  * @package ict
  */
-
+	
 	if (!$_SESSION["user_name"]) {
-		wp_redirect(home_url() . '/youtube-login');
+		wp_redirect(home_url() . '/facebook-login');
 		exit;
 	}
 
 	global $wpdb;
 	get_header();
 
+	// echo $_GET["pageId"];
+	// echo $_GET["orderBy"];
+
+	
 ?>
+
 	<div class="main">
 		<div class="container">
 			<div class="add-channel">
 				<div class="dropdown">
-				  	<span class="dropbtn">Add channel</span>
+				  	<span class="dropbtn">Add page</span>
 				  	<div id="myDropdown" class="dropdown-content">
 				  		<div class="warrap-add-channel">
-					    	<input type="tet" placeholder="Enter channel id..." name="add-channel">
+					    	<input type="tet" name="add-page">
 					    	<button>Add</button>
 				  		</div>
 				 	 </div>
 				</div>
 			</div>
 
-			<table class="table-show-indo-channels">
+			<table>
 				<tr>
-					<th>Name Channel</th>
-					<th>Video Count</th>
-					<th>View Count</th>
-					<th>Subscriber Count</th>
-					<th>Hidden Subscriber Count</th>
+					<th>Stt</th>
+					<th>Title Post</th>
+					<th>Like Count</th>
+					<th>Share Count</th>
+					<th>Comments Count</th>
+					<th>Total Reactions</th>
 					<th>Link</th>
-					<th>Action</th>
 				</tr>
+			<?php
+				$results = get_info_detail_page($_GET["pageId"]);
+
+				if (!empty($results)) {
+					$stt = 1;
+
+					foreach ($results as $item) {
+							?>
+							<tr>
+								<td><?php echo $stt ?></td>
+								<td><?php echo $item['message'] ?></td>
+								<td><?php echo $item['likes'] ?></td>
+								<td><?php echo $item['shares'] ?></td>
+								<td><?php echo $item['comments'] ?></td>
+								<td><?php echo $item['reactions_total'] ?></td>
+								<td><a href="https://facebook.com/<?php echo $item['post_id'] ?>">Click</a></td>
+							</tr>
+
+							<?php
+							$stt++;
+						}
+					}
+
+			?>
 			</table>
 		</div>
-		<div class="modal" id="myModal">
+
+		<div class="modal" id="modal-page">
 		    <div class="modal-dialog">
 		      	<div class="modal-content">
 		      
@@ -85,8 +115,6 @@
 	      	</div>
     	</div>
 	</div>
-	<input type="hidden" id="list-channels" name="list-channels" value="<?php echo get_list_channel(); ?>">
-	<input type="hidden" id="list-key-apis" name="list-key-apis" value="<?php echo get_list_key_api(); ?>">
 	<input type="hidden" id="url-ajax" value="<?php echo admin_url('admin-ajax.php');?>" name="url-ajax">
 
 <?php

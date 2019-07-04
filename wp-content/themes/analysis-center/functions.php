@@ -1126,8 +1126,58 @@ function get_info_channel($id_channel) {
 	return [];
 }
 
-function get_info_page($page_id, $total_day = 1) {
-	$results = [];
+function get_info_page($pages) {
+	ini_set('max_execution_time', '-1');
+	$arrContextOptions=array(
+	    "ssl"=>array(
+	        "verify_peer"=>false,
+	        "verify_peer_name"=>false,
+	    ),
+	);  
+
+	$opts = [
+	    "http" => [
+	        "method" => "GET",
+	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+	    ]
+	];
+
+	$context = stream_context_create($opts);
+
+	$access_token = get_list_access_token();
+	$result = [];
+
+	if (!empty($access_token)) {
+		foreach ($pages as $page_id) {
+			if ($page_id == '') {
+				continue;
+			}
+
+			$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count,link,name&access_token=" . $access_token;
+
+			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
+
+			$list_item = json_decode($response);
+			$page_like = $list_item->fan_count;
+			$page_link = $list_item->link;
+			$page_name = $list_item->name;
+
+			$arr = [
+				'likes' => $page_like,
+				'link' => $page_link,
+				'page_id' => $page_id,
+				'page_name' => $page_name
+			];
+
+			array_push($result, $arr);
+		}
+	}
+
+	return $result;
+}
+
+function get_info_detail_page($page_id, $total_day = 1) {
+	$result = [];
 	ini_set('max_execution_time', '-1');
 	$arrContextOptions=array(
 	    "ssl"=>array(
@@ -1148,25 +1198,29 @@ function get_info_page($page_id, $total_day = 1) {
 	$access_token = get_list_access_token();
 
 	if (!empty($access_token)) {
-		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
 
 		$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
 
 		$list_item = json_decode($response);
 		$page_like = $list_item->fan_count;
 		$datas = $list_item->feed->data;
-		$result = [];
-		
+
 		foreach ($datas as $item) {
 			$time_now = time();
 			$your_date = strtotime($item->created_time);
 			$datediff = $time_now - $your_date;
 
-			$datediff =  round($datediff/(60*60*24));
+			$datediff =  round($datediff/(60*60));
 
-			if ($datediff < $total_day) {
+			if ($datediff >= $total_day*24) {
+				break;
+			}
+			if ($datediff < $total_day*24) {
 				$message = $item->message;
 				$post_id = $item->id;
+
+				$comments = $item->comments->count;
 
 				$reactions_haha = $item->reactions_haha->summary->total_count;
 				$reactions_wow = $item->reactions_wow->summary->total_count;
@@ -1181,6 +1235,7 @@ function get_info_page($page_id, $total_day = 1) {
 					'message' => $message,
 					'likes' => $likes,
 					'shares' => $shares,
+					'comments' => $comments,
 					'reactions_haha' => $reactions_haha,
 					'reactions_wow' => $reactions_wow,
 					'reactions_sad' => $reactions_sad,
@@ -1190,18 +1245,9 @@ function get_info_page($page_id, $total_day = 1) {
 				array_push($result, $arr);
 			}
 		}
-
-		$arr2 = [
-			'page_like' => $page_like,
-			'datas' => $result
-		];
-
-		array_push($results, $arr2);
-		
-		return $results;
 	}
 
-	return [];
+	return $result;
 }
 
 add_action('init', 'myStartSession', 1);
