@@ -324,7 +324,8 @@ global $wpdb;
 
 
 				<?php } else { ?>
-					<h1 style="color:red;margin: 200px 0;text-align: center;">Sếp kêu em bảo trì thì em bảo trì thôi!</h1>
+					<h1 style="color:red;margin: 200px 0;text-align: center;">Khi có sản phẩm lỗi giá thì vẫn luôn được cập nhập ở Group fb này: <a target="_blank" rel="noopener" href="https://www.facebook.com/groups/1895929324003794"> Hotdeal
+					</a></h1>
 						<div id="shopee" class="">
 							<h2>Shopee</h2>
 				      	<div class="product-list">

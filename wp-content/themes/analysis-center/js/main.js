@@ -1,6 +1,6 @@
 $(document).ready(function() {       
    // $('#myModal').modal('show');
-}); 
+    }); 
 
 
 $(document).ready(function() {
@@ -209,7 +209,7 @@ $(document).ready(function() {
     	document.getElementById("myDropdown").classList.toggle("show");
     });
 
-	$(document).on("click", ".warrap-add-channel .btn-add-channel", function() {
+	$(document).on("click", ".warrap-add-channel button", function() {
 		var url_channel = $('input[name="add-channel"]').val();
 
 		$.ajax({
@@ -232,38 +232,13 @@ $(document).ready(function() {
        });
 	});
 
-	$(document).on("click", ".warrap-add-channel .btn-add-page", function() {
-		var url_page = $('input[name="add-page"]').val();
-
-		$.ajax({
-           	type : "post",
-           	dataType : "json",
-           	url : url_ajax, 
-           	data : {
-                action: "add_page",
-                url_page: url_page
-           	},
-           	beforeSend: function(){
-           		
-           	},
-           	success: function(response) {
-           		location.reload();
-           	},
-           	error: function( jqXHR, textStatus, errorThrown ){
-                console.log( 'The following error occured: ' + textStatus, errorThrown );
-           	}
-       });
+	$(document).on("click", "#btn-login-youtube", function(e) {
+		checkLogin(url_ajax);
 	});
 
-	$(document).on("click", ".btn-login-social", function(e) {
-		var url_redirect = $('#url-redirect').val();
-		checkLogin(url_ajax, url_redirect);
-	});
-
-	$(document).on("keypress", ".password-social", function(e) {
+	$(document).on("keypress", "#password", function(e) {
 		if (e.keyCode == 13) {
-			var url_redirect = $('#url-redirect').val();
-			checkLogin(url_ajax, url_redirect);
+			checkLogin(url_ajax);
 		}
 	});
 
@@ -277,32 +252,6 @@ $(document).ready(function() {
 	       	data : {
 	            action: "remove_channel",
 	            id_channel: id_channel
-	       	},
-	       	beforeSend: function(){
-	       		
-	       	},
-	       	success: function(response) {
-	       		if (response.success) {
-	       			element.parents('tr').hide();
-	       		}
-	       	},
-	       	error: function( jqXHR, textStatus, errorThrown ){
-	            console.log( 'The following error occured: ' + textStatus, errorThrown );
-	       	}
-	   });
-	});
-
-	$(document).on("click", ".btn-remove-page", function() {
-		var page_id = $(this).attr('data-id');
-		var element = $(this);
-
-		$.ajax({
-	       	type : "post",
-	       	dataType : "json",
-	       	url : url_ajax, 
-	       	data : {
-	            action: "remove_page",
-	            page_id: page_id
 	       	},
 	       	beforeSend: function(){
 	       		
@@ -344,43 +293,7 @@ $(document).ready(function() {
 
 	getInfoChannels(url_ajax);
 
-	// FACEBOOK
-
-	$(document).on("change", ".warrap-sort select", function() {
-		var sort_by = $(this).val();
-		var page_id = $(this).attr('data-page-id');
-		var home_url = $(this).attr('data-home-url')
-		
-		location.href = home_url + "/facebook-detail?pageId=" + page_id + "&sortBy=" + sort_by;
-	});
-
 });
-
-function showListPostByOrder(page_id, url_ajax) {
-	var modal_title = $('#modal-page .modal-title');
-	var modal_body = $('#modal-page .modal-body tr.item');
-
-	$.ajax({
-       	type : "get",
-       	dataType : "json",
-       	url : url_ajax, 
-       	data : {
-            action: "get_info_detail_by_api",
-            page_id: page_id
-       	},
-       	beforeSend: function(){
-       		
-       	},
-       	success: function(response) {
-       		console.dir(response);
-       	},
-       	error: function( jqXHR, textStatus, errorThrown ){
-            console.error( 'The following error occured: ' + textStatus, errorThrown );
-       	}
-   });
-
-
-}
 
 function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 	var modal_title = $('#myModal .modal-title');
@@ -397,9 +310,9 @@ function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
 	}
 }
 
-function checkLogin(url_ajax, url_redirect) {
+function checkLogin(url_ajax) {
 	var user_name = $('#user-name').val();
-	var password = $('.password-social').val();
+	var password = $('#password').val();
 
 	$.ajax({
        	type : "get",
@@ -415,7 +328,7 @@ function checkLogin(url_ajax, url_redirect) {
        	},
        	success: function(response) {
        		if (response.status) {
-       			location.href = url_redirect;
+       			location.href = "youtuber";
        		} else {
            		alert("Login fail");
        		}

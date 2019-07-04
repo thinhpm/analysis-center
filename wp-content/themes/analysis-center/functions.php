@@ -981,7 +981,6 @@ function set_voucher() {
 	$time_out = $_POST['date_exp'];
 	$name_cate = $_POST['name_cate'];
 	$website = $_POST['website'];
-	
 
 	$arr_id_coupon = $wpdb->get_results ("SELECT id_coupon FROM voucher WHERE website='" . $website . "'");
 
@@ -1014,21 +1013,6 @@ function get_list_key_api() {
 	return $result;
 }
 
-function get_list_access_token() {
-	global $wpdb;
-	$result = '';
-	$apis = $wpdb->get_results ("SELECT access_token FROM access_tokens WHERE `active` = true LIMIT 1");
-
-	if (!empty($apis)) {
-		// foreach ($apis as $item) {
-		// 	$result .= $item->key_api . ',';
-		// }
-		$result = $apis[0]->access_token;
-	}
-
-	return $result;
-}
-
 function get_list_channel() {
 	global $wpdb;
 
@@ -1045,29 +1029,6 @@ function get_list_channel() {
 		if (!empty($channels)) {
 			foreach ($channels as $item) {
 				$result .= $item->id_channel . ',';
-			}
-		}
-
-		return $result;
-	}
-}
-
-function get_list_page() {
-	global $wpdb;
-
-	$result = '';
-	$user_name = $_SESSION["user_name"];
-	$ids = $wpdb->get_results ("SELECT id FROM user_for_youtube WHERE `user_name`='" . $user_name . "'");
-
-	if (!empty($ids)) {
-		$id_user = $ids[0]->id;
-		$_SESSION['user_id'] = $id_user;
-
-		$channels = $wpdb->get_results("SELECT page_id FROM facebook_pages WHERE `user`='" . $id_user . "'");
-
-		if (!empty($channels)) {
-			foreach ($channels as $item) {
-				$result .= $item->page_id . ',';
 			}
 		}
 
@@ -1126,176 +1087,6 @@ function get_info_channel($id_channel) {
 	return [];
 }
 
-function get_info_page($pages) {
-	ini_set('max_execution_time', '-1');
-	$arrContextOptions=array(
-	    "ssl"=>array(
-	        "verify_peer"=>false,
-	        "verify_peer_name"=>false,
-	    ),
-	);  
-
-	$opts = [
-	    "http" => [
-	        "method" => "GET",
-	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-	    ]
-	];
-
-	$context = stream_context_create($opts);
-
-	$access_token = get_list_access_token();
-	$result = [];
-
-	if (!empty($access_token)) {
-		foreach ($pages as $page_id) {
-			if ($page_id == '') {
-				continue;
-			}
-
-			$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count,link,name&access_token=" . $access_token;
-
-			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
-
-			$list_item = json_decode($response);
-			$page_like = $list_item->fan_count;
-			$page_link = $list_item->link;
-			$page_name = $list_item->name;
-
-			$arr = [
-				'likes' => $page_like,
-				'link' => $page_link,
-				'page_id' => $page_id,
-				'page_name' => $page_name
-			];
-
-			array_push($result, $arr);
-		}
-	}
-
-	return $result;
-}
-
-function get_info_detail_page($page_id, $total_day = 1) {
-	$result = [];
-	$point_share = 3;
-	$point_comment = 2;
-	$point_other = 1;
-
-	date_default_timezone_set('UTC');
-	$vi_time = new DateTimeZone('+7');
-	ini_set('max_execution_time', '-1');
-	$arrContextOptions=array(
-	    "ssl"=>array(
-	        "verify_peer"=>false,
-	        "verify_peer_name"=>false,
-	    ),
-	);  
-
-	$opts = [
-	    "http" => [
-	        "method" => "GET",
-	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
-	    ]
-	];
-
-	$context = stream_context_create($opts);
-
-	$access_token = get_list_access_token();
-
-	if (!empty($access_token)) {
-		$check = true;
-
-		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=name%2Cfeed.limit(10){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
-		$next_page = '';
-		$stt = 1;
-
-		while ($check) {
-			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
-
-			$list_item = json_decode($response);
-
-			if ($stt == 1) {
-				$name = $list_item->name;
-				$datas = $list_item->feed->data;
-				$next_page = $list_item->feed->paging->next;
-			} else {
-				$datas = $list_item->data;
-				$next_page = $list_item->paging->next;
-			}
-
-			foreach ($datas as $item) {
-				$time_now = time();
-				$your_date = strtotime($item->created_time);
-				$datediff = $time_now - $your_date;
-
-				$datediff =  round($datediff/(60*60));
-
-				if ($datediff >= $total_day*24) {
-					$check = false;
-					break;
-				}
-
-				if ($datediff < $total_day*24) {
-					$message = $item->message;
-					$post_id = $item->id;
-
-					$comments = $item->comments->count;
-					// $comments = 0;
-
-					$reactions_haha = $item->reactions_haha->summary->total_count;
-					$reactions_wow = $item->reactions_wow->summary->total_count;
-					$reactions_sad = $item->reactions_sad->summary->total_count;
-					$reactions_total = $item->reactions_total->summary->total_count;
-
-					$likes = !empty($item->likes) ? $item->likes->count : 0;
-					$shares = !empty($item->shares) ? $item->shares->count : 0;
-					$total_point = $shares*$point_share + $comments*$point_comment + $reactions_total*$point_other;
-
-					$created_time = new DateTime($item->created_time);
-					$created_time->setTimezone($vi_time);
-					$created_time = $created_time->format('Y-m-d H:i:s');
-
-					$arr = [
-						'post_id' => $post_id,
-						'message' => $message,
-						'likes' => $likes,
-						'shares' => $shares,
-						'comments' => $comments,
-						'reactions_haha' => $reactions_haha,
-						'reactions_wow' => $reactions_wow,
-						'reactions_sad' => $reactions_sad,
-						'reactions_total' => $reactions_total,
-						'total_point' => $total_point,
-						'created_time' => $created_time
-					];
-
-					array_push($result, $arr);
-				}
-			}
-
-			$url = $next_page;
-			$stt++;
-		}
-	}
-
-	return [
-		'name' => $name,
-		'datas' => $result
-	];
-}
-
-function sort_list_post($datas, $sort_by) {
-	if ($sort_by == 'popular') {
-		$total_point = array_column($datas, 'total_point');
-		array_multisort($total_point, SORT_DESC, $datas);
-
-		return $datas;
-	}
-
-	return $datas;
-}
-
 add_action('init', 'myStartSession', 1);
 add_action('wp_logout', 'myEndSession');
 add_action('wp_login', 'myEndSession');
@@ -1333,24 +1124,6 @@ function add_channel() {
 	}
 
 	$wpdb->get_results("INSERT INTO channels (id_channel, user) VALUES ('" . $id_channel . "', " . $user_id . ")");
-	wp_send_json('Done');
-	die;
-}
-
-add_action('wp_ajax_add_page', 'add_page');
-add_action('wp_ajax_nopriv_add_page', 'add_page');
-
-function add_page() {
-	global $wpdb;
-	$user_id = $_SESSION['user_id'];
-	$url_page = $_POST['url_page'];
-
-	if ($url_page == '') {
-		wp_send_json('false');
-		die();
-	}
-
-	$wpdb->get_results("INSERT INTO facebook_pages (page_id, user) VALUES ('" . $url_page . "', " . $user_id . ")");
 	wp_send_json('Done');
 	die;
 }
@@ -1394,20 +1167,6 @@ function remove_channel() {
 	$id_channel = $_POST['id_channel'];
 
 	$wpdb->get_results("DELETE FROM `channels` WHERE `id_channel`='" . $id_channel ."' AND `user`=" . $user_id);
-
-	wp_send_json(['success' => true]);
-	die;
-}
-
-add_action('wp_ajax_remove_page', 'remove_page');
-add_action('wp_ajax_nopriv_remove_page', 'remove_page');
-
-function remove_page() {
-	global $wpdb;
-	$user_id = $_SESSION['user_id'];
-	$page_id = $_POST['page_id'];
-
-	$wpdb->get_results("DELETE FROM `facebook_pages` WHERE `page_id`='" . $page_id ."' AND `user`=" . $user_id);
 
 	wp_send_json(['success' => true]);
 	die;
