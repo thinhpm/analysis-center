@@ -209,7 +209,7 @@ $(document).ready(function() {
     	document.getElementById("myDropdown").classList.toggle("show");
     });
 
-	$(document).on("click", ".warrap-add-channel button", function() {
+	$(document).on("click", ".warrap-add-channel .btn-add-channel", function() {
 		var url_channel = $('input[name="add-channel"]').val();
 
 		$.ajax({
@@ -219,6 +219,29 @@ $(document).ready(function() {
            	data : {
                 action: "add_channel",
                 url_channel: url_channel
+           	},
+           	beforeSend: function(){
+           		
+           	},
+           	success: function(response) {
+           		location.reload();
+           	},
+           	error: function( jqXHR, textStatus, errorThrown ){
+                console.log( 'The following error occured: ' + textStatus, errorThrown );
+           	}
+       });
+	});
+
+	$(document).on("click", ".warrap-add-channel .btn-add-page", function() {
+		var url_page = $('input[name="add-page"]').val();
+
+		$.ajax({
+           	type : "post",
+           	dataType : "json",
+           	url : url_ajax, 
+           	data : {
+                action: "add_page",
+                url_page: url_page
            	},
            	beforeSend: function(){
            		
@@ -269,6 +292,32 @@ $(document).ready(function() {
 	   });
 	});
 
+	$(document).on("click", ".btn-remove-page", function() {
+		var page_id = $(this).attr('data-id');
+		var element = $(this);
+
+		$.ajax({
+	       	type : "post",
+	       	dataType : "json",
+	       	url : url_ajax, 
+	       	data : {
+	            action: "remove_page",
+	            page_id: page_id
+	       	},
+	       	beforeSend: function(){
+	       		
+	       	},
+	       	success: function(response) {
+	       		if (response.success) {
+	       			element.parents('tr').hide();
+	       		}
+	       	},
+	       	error: function( jqXHR, textStatus, errorThrown ){
+	            console.log( 'The following error occured: ' + textStatus, errorThrown );
+	       	}
+	   });
+	});
+
 	$(document).on("click", ".btn-show-detail-channel", function() {
 		var modal_title = $('#myModal .modal-title');
 		var id_channel = $(this).attr('data-id');
@@ -296,6 +345,14 @@ $(document).ready(function() {
 	getInfoChannels(url_ajax);
 
 	// FACEBOOK
+
+	$(document).on("change", ".warrap-sort select", function() {
+		var sort_by = $(this).val();
+		var page_id = $(this).attr('data-page-id');
+		var home_url = $(this).attr('data-home-url')
+		
+		location.href = home_url + "/facebook-detail?pageId=" + page_id + "&sortBy=" + sort_by;
+	});
 
 });
 

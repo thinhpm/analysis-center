@@ -26,17 +26,29 @@
 
 	global $wpdb;
 	get_header();
+	$page_id = $_GET["pageId"];
+	$sort_by = $_GET["sortBy"];
 
-	// echo $_GET["pageId"];
-	// echo $_GET["orderBy"];
+	$info = get_info_detail_page($page_id);
 
+	$datas = $info['datas'];
+	$name = $info['name'];
+	$results = sort_list_post($datas, $sort_by);
 	
 ?>
 
 	<div class="main">
 		<div class="container">
-			<div class="add-channel">
-				<h2></h2>
+			<div style="text-align: center; padding: 30px 0;">
+				<h2><?php echo $name ?></h2>
+			</div>
+
+			<div class="warrap-sort">
+				<span>Sort By:</span>
+				<select data-page-id="<?php echo $page_id ?>" data-url-home="<?php echo home_url() ?>">
+				  	<option value="newer" selected>Newer</option>
+				  	<option value="popular" <?php echo $sort_by == 'popular' ? 'selected' : '' ?>>Popular</option>
+				</select>
 			</div>
 
 			<table>
@@ -51,10 +63,6 @@
 					<th>Link</th>
 				</tr>
 			<?php
-				$page_id = $_GET["pageId"];
-				$sort_by = $_GET["sortBy"];
-				$datas = get_info_detail_page($page_id);
-				$results = sort_list_post($datas, $sort_by);
 
 				if (!empty($results)) {
 					$stt = 1;
@@ -63,7 +71,7 @@
 							?>
 							<tr>
 								<td><?php echo $stt ?></td>
-								<td><?php echo $item['message'] ?></td>
+								<td><?php echo substr($item['message'], 0, 130) ?>...</td>
 								<td><?php echo $item['likes'] ?></td>
 								<td><?php echo $item['shares'] ?></td>
 								<td><?php echo $item['comments'] ?></td>

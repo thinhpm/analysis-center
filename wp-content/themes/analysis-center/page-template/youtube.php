@@ -36,7 +36,7 @@
 				  	<div id="myDropdown" class="dropdown-content">
 				  		<div class="warrap-add-channel">
 					    	<input type="tet" placeholder="Enter channel id..." name="add-channel">
-					    	<button>Add</button>
+					    	<button class="btn-add-channel">Add</button>
 				  		</div>
 				 	 </div>
 				</div>

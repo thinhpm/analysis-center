@@ -479,8 +479,19 @@ footer a {
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
+a:visited {
+	color: royalblue;
+}
+.warrap-sort {
+	text-align: right;
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+.warrap-sort select {
+	padding: 0;
+}
 
-.btn-remove-channel {
+.btn-remove-channel, .btn-remove-page {
 	width: 24px;
     margin: 0 auto;
     display: block;

@@ -35,8 +35,8 @@
 				  	<span class="dropbtn">Add page</span>
 				  	<div id="myDropdown" class="dropdown-content">
 				  		<div class="warrap-add-channel">
-					    	<input type="tet" name="add-page">
-					    	<button>Add</button>
+					    	<input type="tet" name="add-page" placeholder="Enter page id...">
+					    	<button class="btn-add-page">Add</button>
 				  		</div>
 				 	 </div>
 				</div>
@@ -44,7 +44,7 @@
 
 			<table>
 				<tr>
-					<th>Name Page</th>
+					<th>Page Name</th>
 					<th>Like Count</th>
 					<th>Link</th>
 					<th>Action</th>
@@ -61,10 +61,10 @@
 					foreach ($results as $item) {
 							?>
 							<tr>
-								<td class="show-detail-page"><a href=" <?php echo home_url() ?>/facebook-detail?pageId=<?php echo $item['page_id'] ?>" target="_blank"><?php echo $item['page_name'] ?></a></td>
+								<td class="show-detail-page"><a href=" <?php echo home_url() ?>/facebook-detail?pageId=<?php echo $item['page_id'] ?>&sortBy=newer" target="_blank"><?php echo $item['page_name'] ?></a></td>
 								<td><?php echo $item['likes'] ?></td>
 								<td><a target="_blank" href="<?php echo $item['link'] ?>">Click</a></td>
-								<td><span class="btn-remove-channel" data-id="<?php echo $item['id_channel'] ?>">x</span></td>
+								<td><span class="btn-remove-page" data-id="<?php echo $item['page_id'] ?>">x</span></td>
 							</tr>
 
 							<?php

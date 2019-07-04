@@ -1182,6 +1182,8 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	$point_comment = 2;
 	$point_other = 1;
 
+	date_default_timezone_set('UTC');
+	$vi_time = new DateTimeZone('+7');
 	ini_set('max_execution_time', '-1');
 	$arrContextOptions=array(
 	    "ssl"=>array(
@@ -1202,62 +1204,85 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	$access_token = get_list_access_token();
 
 	if (!empty($access_token)) {
-		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=fan_count%2Cfeed.limit(100){created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+		$check = true;
 
-		$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
+		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=name%2Cfeed.limit(10){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+		$next_page = '';
+		$stt = 1;
 
-		$list_item = json_decode($response);
-		$page_like = $list_item->fan_count;
-		$datas = $list_item->feed->data;
+		while ($check) {
+			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
 
-		foreach ($datas as $item) {
-			$time_now = time();
-			$your_date = strtotime($item->created_time);
-			$datediff = $time_now - $your_date;
+			$list_item = json_decode($response);
 
-			$datediff =  round($datediff/(60*60));
-
-			if ($datediff >= $total_day*24) {
-				break;
+			if ($stt == 1) {
+				$name = $list_item->name;
+				$datas = $list_item->feed->data;
+				$next_page = $list_item->feed->paging->next;
+			} else {
+				$datas = $list_item->data;
+				$next_page = $list_item->paging->next;
 			}
-			if ($datediff < $total_day*24) {
-				$message = $item->message;
-				$post_id = $item->id;
 
-				// $comments = $item->comments->count;
-				$comments = 0;
+			foreach ($datas as $item) {
+				$time_now = time();
+				$your_date = strtotime($item->created_time);
+				$datediff = $time_now - $your_date;
 
-				$reactions_haha = $item->reactions_haha->summary->total_count;
-				$reactions_wow = $item->reactions_wow->summary->total_count;
-				$reactions_sad = $item->reactions_sad->summary->total_count;
-				$reactions_total = $item->reactions_total->summary->total_count;
+				$datediff =  round($datediff/(60*60));
 
-				$likes = !empty($item->likes) ? $item->likes->count : 0;
-				$shares = !empty($item->shares) ? $item->shares->count : 0;
-				$total_point = $shares*$point_share + $comments*$point_comment + $reactions_total*$point_other;
-				$created_time = date_create($item->created_time);
-				$created_time = date_format($created_time,"Y/m/d H:i:s");
+				if ($datediff >= $total_day*24) {
+					$check = false;
+					break;
+				}
 
-				$arr = [
-					'post_id' => $post_id,
-					'message' => $message,
-					'likes' => $likes,
-					'shares' => $shares,
-					'comments' => $comments,
-					'reactions_haha' => $reactions_haha,
-					'reactions_wow' => $reactions_wow,
-					'reactions_sad' => $reactions_sad,
-					'reactions_total' => $reactions_total,
-					'total_point' => $total_point,
-					'created_time' => $created_time
-				];
+				if ($datediff < $total_day*24) {
+					$message = $item->message;
+					$post_id = $item->id;
 
-				array_push($result, $arr);
+					$comments = $item->comments->count;
+					// $comments = 0;
+
+					$reactions_haha = $item->reactions_haha->summary->total_count;
+					$reactions_wow = $item->reactions_wow->summary->total_count;
+					$reactions_sad = $item->reactions_sad->summary->total_count;
+					$reactions_total = $item->reactions_total->summary->total_count;
+
+					$likes = !empty($item->likes) ? $item->likes->count : 0;
+					$shares = !empty($item->shares) ? $item->shares->count : 0;
+					$total_point = $shares*$point_share + $comments*$point_comment + $reactions_total*$point_other;
+
+					$created_time = new DateTime($item->created_time);
+					$created_time->setTimezone($vi_time);
+					$created_time = $created_time->format('Y-m-d H:i:s');
+
+					$arr = [
+						'post_id' => $post_id,
+						'message' => $message,
+						'likes' => $likes,
+						'shares' => $shares,
+						'comments' => $comments,
+						'reactions_haha' => $reactions_haha,
+						'reactions_wow' => $reactions_wow,
+						'reactions_sad' => $reactions_sad,
+						'reactions_total' => $reactions_total,
+						'total_point' => $total_point,
+						'created_time' => $created_time
+					];
+
+					array_push($result, $arr);
+				}
 			}
+
+			$url = $next_page;
+			$stt++;
 		}
 	}
 
-	return $result;
+	return [
+		'name' => $name,
+		'datas' => $result
+	];
 }
 
 function sort_list_post($datas, $sort_by) {
@@ -1312,6 +1337,24 @@ function add_channel() {
 	die;
 }
 
+add_action('wp_ajax_add_page', 'add_page');
+add_action('wp_ajax_nopriv_add_page', 'add_page');
+
+function add_page() {
+	global $wpdb;
+	$user_id = $_SESSION['user_id'];
+	$url_page = $_POST['url_page'];
+
+	if ($url_page == '') {
+		wp_send_json('false');
+		die();
+	}
+
+	$wpdb->get_results("INSERT INTO facebook_pages (page_id, user) VALUES ('" . $url_page . "', " . $user_id . ")");
+	wp_send_json('Done');
+	die;
+}
+
 add_action('wp_ajax_process_form_login', 'process_form_login');
 add_action('wp_ajax_nopriv_process_form_login', 'process_form_login');
 
@@ -1351,6 +1394,20 @@ function remove_channel() {
 	$id_channel = $_POST['id_channel'];
 
 	$wpdb->get_results("DELETE FROM `channels` WHERE `id_channel`='" . $id_channel ."' AND `user`=" . $user_id);
+
+	wp_send_json(['success' => true]);
+	die;
+}
+
+add_action('wp_ajax_remove_page', 'remove_page');
+add_action('wp_ajax_nopriv_remove_page', 'remove_page');
+
+function remove_page() {
+	global $wpdb;
+	$user_id = $_SESSION['user_id'];
+	$page_id = $_POST['page_id'];
+
+	$wpdb->get_results("DELETE FROM `facebook_pages` WHERE `page_id`='" . $page_id ."' AND `user`=" . $user_id);
 
 	wp_send_json(['success' => true]);
 	die;
