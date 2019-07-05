@@ -1342,7 +1342,7 @@ function get_info_detail_page($page_id, $total_day = 1) {
 }
 
 function sort_list_post($datas, $sort_by) {
-	if ($sort_by == 'popular') {
+	if ($sort_by == 'most_view') {
 		$total_point = array_column($datas, 'total_point');
 		array_multisort($total_point, SORT_DESC, $datas);
 

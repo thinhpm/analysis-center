@@ -46,8 +46,8 @@
 			<div class="warrap-sort">
 				<span>Sort By:</span>
 				<select data-page-id="<?php echo $page_id ?>" data-home-url="<?php echo home_url() ?>">
-				  	<option value="newer" selected>Newer</option>
-				  	<option value="popular" <?php echo $sort_by == 'popular' ? 'selected' : '' ?>>Popular</option>
+				  	<option value="latest_post" selected>Latest post</option>
+				  	<option value="most_view" <?php echo $sort_by == 'most_view' ? 'selected' : '' ?>>Most viewed post</option>
 				</select>
 			</div>
 
