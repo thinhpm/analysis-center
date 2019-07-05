@@ -247,7 +247,11 @@ $(document).ready(function() {
            		
            	},
            	success: function(response) {
-           		location.reload();
+           		if (response.status) {
+           			location.reload();
+           		} else {
+           			alert("Page not found!");
+           		}
            	},
            	error: function( jqXHR, textStatus, errorThrown ){
                 console.log( 'The following error occured: ' + textStatus, errorThrown );

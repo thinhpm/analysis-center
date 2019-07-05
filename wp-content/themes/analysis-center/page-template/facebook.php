@@ -35,7 +35,7 @@
 				  	<span class="dropbtn">Add page</span>
 				  	<div id="myDropdown" class="dropdown-content">
 				  		<div class="warrap-add-channel">
-					    	<input type="tet" name="add-page" placeholder="Enter page id...">
+					    	<input type="tet" name="add-page" placeholder="Enter page id, page url...">
 					    	<button class="btn-add-page">Add</button>
 				  		</div>
 				 	 </div>

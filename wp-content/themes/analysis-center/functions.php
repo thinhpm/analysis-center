@@ -1256,8 +1256,6 @@ function get_info_detail_page($page_id, $total_day = 1) {
 				$count_need = $total_limit;
 				$total_result = $total_result - $total_limit;
 			}
-
-			print_r($count_need);
 			
 			if ($next_page == '') {
 				$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=name%2Cfeed.limit(" . $count_need . "){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
@@ -1403,14 +1401,45 @@ function add_page() {
 	$user_id = $_SESSION['user_id'];
 	$url_page = $_POST['url_page'];
 
+	$url_page = get_page_id_by_url($url_page);
+
 	if ($url_page == '') {
-		wp_send_json('false');
+		wp_send_json(['status' => false]);
 		die();
 	}
 
 	$wpdb->get_results("INSERT INTO facebook_pages (page_id, user) VALUES ('" . $url_page . "', " . $user_id . ")");
-	wp_send_json('Done');
+	wp_send_json(['status' => true]);
 	die;
+}
+
+function get_page_id_by_url($url) {
+	ini_set('max_execution_time', '-1');
+
+	$check = strpos($url, 'http');
+
+	if ($check === false) {
+		$url = "https://facebook.com/" . $url;
+	}
+
+	$opts = [
+	    "http" => [
+	        "method" => "GET",
+	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+	    ]
+	];
+
+	$context = stream_context_create($opts);
+
+	$response = file_get_contents($url, false, $context);
+
+	preg_match_all("/content=\"fb:\/\/page\/\?id=(.+?)\"/", $response, $output_array);
+
+	if (!empty($output_array) && count($output_array) > 1 && !empty($output_array[1])) {
+		return $output_array[1][0];
+	}
+
+	return '';
 }
 
 add_action('wp_ajax_process_form_login', 'process_form_login');
