@@ -508,6 +508,10 @@ a:visited {
 	cursor: pointer;
 }
 
+table.table-show-detail>thead>tr>th, table.table-show-detail>tbody>tr>th, table.table-show-detail>tfoot>tr>th, table.table-show-detail>thead>tr>td, table.table-show-detail>tbody>tr>td, table.table-show-detail>tfoot>tr>td {
+	border: 1px solid #000;
+}
+
 .table-show-detail td:nth-child(3) {
 	background: rgb(53, 120, 229);
     color: #fff;
