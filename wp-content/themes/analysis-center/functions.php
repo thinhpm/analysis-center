@@ -1204,7 +1204,7 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	$access_token = get_list_access_token();
 
 	if (!empty($access_token)) {
-		$total_limit = 100;
+		$total_limit = 50;
 		$total_result = 0;
 		$check = true;
 		$url = "https://graph.facebook.com/v3.3/" . $page_id . "/feed?fields=created_time&limit=" . $total_limit . "&access_token=" . $access_token;
