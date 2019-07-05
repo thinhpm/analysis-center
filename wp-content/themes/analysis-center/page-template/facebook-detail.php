@@ -51,7 +51,7 @@
 				</select>
 			</div>
 
-			<table>
+			<table class="table-show-detail">
 				<tr>
 					<th>Stt</th>
 					<th>Title Post</th>

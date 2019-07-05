@@ -507,6 +507,35 @@ a:visited {
 	text-decoration: underline;
 	cursor: pointer;
 }
+
+.table-show-detail td:nth-child(3) {
+	background: rgb(53, 120, 229);
+    color: #fff;
+}
+
+.table-show-detail td:nth-child(4) {
+	background: #e9e9e9;
+    color: #000;
+}
+
+.table-show-detail td:nth-child(5) {
+	background: beige;
+    color: #000;
+}
+
+.table-show-detail td:nth-child(6) {
+	color: #fff;
+    background-color: rgb(66, 183, 42);
+}
+.table-show-detail td:nth-child(7) {
+	background-color: rgb(141, 148, 158);
+	color: #fff;
+}
+
+.table-show-detail td:nth-child(8) a{
+	color: rgb(53, 120, 229);
+}
+
 /*
 a:visited {
 	color: #337ab7;
