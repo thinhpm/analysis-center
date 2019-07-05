@@ -1204,13 +1204,67 @@ function get_info_detail_page($page_id, $total_day = 1) {
 	$access_token = get_list_access_token();
 
 	if (!empty($access_token)) {
+		$total_limit = 100;
+		$total_result = 0;
 		$check = true;
-
-		$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=name%2Cfeed.limit(10){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+		$url = "https://graph.facebook.com/v3.3/" . $page_id . "/feed?fields=created_time&limit=" . $total_limit . "&access_token=" . $access_token;
 		$next_page = '';
 		$stt = 1;
 
 		while ($check) {
+			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
+
+			$list_item = json_decode($response);
+
+			$datas = $list_item->data;
+			$next_page = !empty($list_item->paging->next) ? $list_item->paging->next : '';
+
+			foreach ($datas as $item) {
+				$time_now = time();
+				$your_date = strtotime($item->created_time);
+				$datediff = $time_now - $your_date;
+
+				$datediff =  round($datediff/(60*60));
+
+				if ($datediff >= $total_day*24) {
+					$check = false;
+					break;
+				}
+
+				if ($datediff < $total_day*24) {
+					$total_result++;
+				}
+			}
+
+			if ($next_page == '') {
+				break;
+			}
+
+			$url = $next_page;
+			$stt++;
+		}
+
+		$next_page = '';
+		$stt = 1;
+		$check = true;
+
+		while ($total_result > 0) {
+			if ($total_result < $total_limit + 1) {
+				$count_need = $total_result;
+				$total_result = 0;
+			} else {
+				$count_need = $total_limit;
+				$total_result = $total_result - $total_limit;
+			}
+
+			print_r($count_need);
+			
+			if ($next_page == '') {
+				$url = "https://graph.facebook.com/v3.3/" . $page_id . "?fields=name%2Cfeed.limit(" . $count_need . "){comments,created_time,message,likes,shares,reactions.limit(0).type(HAHA).summary(total_count).as(reactions_haha),reactions.limit(0).type(WOW).summary(total_count).as(reactions_wow),reactions.limit(0).type(SAD).summary(total_count).as(reactions_sad),reactions.limit(0).summary(total_count).as(reactions_total)}&access_token=" . $access_token;
+			} else {
+				$url = $next_page;
+			}
+
 			$response = file_get_contents($url, false, stream_context_create($arrContextOptions));
 
 			$list_item = json_decode($response);
@@ -1272,6 +1326,10 @@ function get_info_detail_page($page_id, $total_day = 1) {
 
 					array_push($result, $arr);
 				}
+			}
+
+			if ($next_page == '' || $total_result < 1) {
+				break;
 			}
 
 			$url = $next_page;
