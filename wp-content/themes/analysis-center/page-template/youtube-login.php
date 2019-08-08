@@ -19,8 +19,6 @@
  * @package ict
  */
 	get_header();
-
-	
 ?>
 <div class="container">
 	<div class="limiter" style="text-align: center">
