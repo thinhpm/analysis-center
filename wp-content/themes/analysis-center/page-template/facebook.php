@@ -63,7 +63,7 @@
 							<tr>
 								<td class="show-detail-page"><a href="<?php echo $item['link'] ?>" target="_blank"><?php echo $item['page_name'] ?></a></td>
 								<td><?php echo $item['likes'] ?></td>
-								<td class="show-detail-page" ><a target="_blank" " href="<?php echo home_url() ?>/facebook-detail?pageId=<?php echo $item['page_id'] ?>&sortBy=latest_post">Click</a></td>
+								<td class="show-detail-page" ><a target="_blank" " href="<?php echo home_url() ?>/facebook-comments?pageId=<?php echo $item['page_id'] ?>">Click</a></td>
 								<td><span class="btn-remove-page" data-id="<?php echo $item['page_id'] ?>">x</span></td>
 							</tr>
 							<?php
