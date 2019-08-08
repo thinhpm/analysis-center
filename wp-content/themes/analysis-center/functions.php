@@ -1907,3 +1907,36 @@ function get_proxy() {
 
 	return $result;
 }
+
+function get_list_comment($page_id) {
+	$access_token = get_list_access_token();
+	ini_set('max_execution_time', "-1");
+
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+	$url = "https://graph.facebook.com/fql?q=SELECT+text,time,fromid,post_id+FROM+comment+WHERE+post_id+in+(SELECT+post_id+FROM+stream+WHERE+source_id+=+'" . $page_id . "'+AND+type+=+'80')+ORDER+BY+time+DESC&access_token=" . $access_token;
+
+	// $url = "https://graph.facebook.com/v4.0/me?access_token=" . $access_token;
+
+	$arrContextOptions=array(
+	    "ssl"=>array(
+	        "verify_peer"=>false,
+	        "verify_peer_name"=>false,
+	    ),
+	);  
+
+	$opts = [
+	    "http" => [
+	        "method" => "GET",
+	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+	    ]
+	];
+
+	$context = stream_context_create($arrContextOptions);
+
+	$data = file_get_contents($url, false, $context);
+
+	$list_category = json_decode($data, false, 512, JSON_BIGINT_AS_STRING);
+
+	return $list_category->data;
+}
