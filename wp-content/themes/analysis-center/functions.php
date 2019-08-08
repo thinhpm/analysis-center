@@ -423,6 +423,87 @@ function get_post_blog($atts, $content = null){
     return $list_post;
 }
 
+function filter_all_category_lazada_by_curl() {
+	global $wpdb;
+
+	$idWeb = 1;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$percent = 60;
+	$numPage = 25;
+	
+	ini_set('max_execution_time', "-1");
+
+	$ch = curl_init();
+
+	$proxy = get_proxy()[0];
+
+	foreach ($categories as $value) {
+		$categoryName = $value->id_category;
+		$mainResult = [];
+		$stt = 1;
+
+		while(true) {
+			$url = 'https://www.lazada.vn/' . $categoryName . '/?page=' . $stt . '&sort=priceasc';
+
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 2000);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_PROXY, $proxy);
+			curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+			$data = curl_exec($ch);
+
+			preg_match_all("/\"itemId\":\"(.+?)\"ratingScore\"/", $data, $output_array);
+
+			if(count($output_array[0]) == 0 || $stt == $numPage){
+				break;
+			}
+
+			foreach($output_array[0] as $value) {
+				$arrResult = [];
+				$discount = getValueOf($value, 'discount');
+				$discount = str_replace('-', '', $discount);
+				$discount = str_replace('%', '', $discount);
+
+				if ($discount >= $percent) {
+					$name = getValueOf($value, 'name');
+					$id_product = getValueOf($value, 'itemId');
+					$linkProduct = 'https:' . getValueOf($value, 'productUrl');
+					$imageProduct = getValueOf($value, 'image');
+				    $originalPrice = getValueOf($value, 'originalPrice');
+				    $originalPrice = str_replace('.00', '', $originalPrice);
+				    $originalPrice = str_replace('.0', '', $originalPrice);
+				    $price = getValueOf($value, 'price');
+				    $lastUpdate = date("Y-m-d H:i:s");
+				    $price = str_replace('.00', '', $price);
+
+					$arrResult['id_product'] = $id_product;
+					$arrResult['name'] = $name;
+					$arrResult['linkProduct'] = $linkProduct;
+					$arrResult['imageProduct'] = $imageProduct;
+					$arrResult['originalPrice'] = $originalPrice;
+					$arrResult['price'] = $price;
+					$arrResult['discount'] = $discount;
+					$arrResult['last_update'] = $lastUpdate;
+					$arrResult['name_category'] = $categoryName;
+					$arrResult['id_web'] = $idWeb;
+
+					array_push($mainResult, $arrResult);
+				}
+			}
+
+			$stt++;
+		}
+
+		category_save_db($mainResult, $arrProductId);
+	}
+
+	curl_close($ch);
+}
 
 function filter_all_category() {
 	global $wpdb;
@@ -454,7 +535,6 @@ function filter_all_category() {
 			}
 			
 			foreach($output_array[0] as $value){
-				
 				$arrResult = [];
 				$discount = getValueOf($value, 'discount');
 				$discount = str_replace('-', '', $discount);
@@ -484,18 +564,13 @@ function filter_all_category() {
 					$arrResult['id_web'] = $idWeb;
 
 					array_push($mainResult, $arrResult);
-
 				}
-				
 			}
 
 			$stt++;
-			
 		}
 		
-
 		category_save_db($mainResult, $arrProductId);
-		
 	}
 }
 
@@ -549,7 +624,6 @@ function category_save_db_api($value, $arrProductId) {
 
 	return;
 }
-
 
 add_action( 'wpb_custom_cron', 'filter_all_category' );
 
@@ -644,6 +718,105 @@ function filter_all_category_tiki() {
 }
 
 add_action( 'wpb_custom_cron_filter_tiki', 'filter_all_category_tiki' );
+
+function filter_all_category_tiki_by_curl() {
+	ini_set('max_execution_time', '-1');
+	$idWeb = '3';
+	global $wpdb;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
+	$percent = 80;
+	$numPage = 200;
+	
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	foreach ($categories as $categorie) {
+		$mainResult = [];
+		$stt = 1;
+
+		while(true) {
+			if ($stt == $numPage) {
+				break;
+			}
+
+			$url = 'https://tiki.vn/' . $categorie->id_category . '?src=mega-menu&order=price%2Casc&page=' . $stt;
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+			$data = curl_exec($ch);
+
+			$doc = new DOMDocument();
+			@$doc->loadHTML('<?xml encoding="UTF-8">' . $data);
+
+			$nodes = $doc->getElementsByTagName('div');
+
+			foreach ($nodes as $node) {
+				$arrResult = [];
+
+				if ($node->hasAttribute('data-seller-product-id')) {
+					$tag_a = $node->getElementsByTagName('a')->item(0);
+					$idProduct = $tag_a->getAttribute('data-id');
+					$name = $tag_a->getAttribute('title');
+					$linkProduct = $tag_a->getAttribute('href');
+					$imageProduct = $node->getElementsByTagName('img')->item(0)->getAttribute('src');
+					$tag_span = $node->getElementsByTagName('span');
+
+					foreach ($tag_span as $span) {
+						if ($span->getAttribute('class') == 'price-regular') {
+							$originalPrice = $span->nodeValue;
+							$originalPrice = str_replace('.', '', $originalPrice);
+							$originalPrice = str_replace('₫', '', $originalPrice);
+						}
+
+						if ($span->getAttribute('class') == 'final-price') {
+							$price = trim($span->nodeValue);
+							$price = str_replace('.', '', $price);
+							$price = str_replace('₫', '', $price);
+						}
+
+						if ($span->getAttribute('class') == 'sale-tag sale-tag-square') {
+							$discount = $span->nodeValue;
+							$discount = str_replace('%', '', $discount);
+							$discount = str_replace('-', '', $discount);
+						}
+					}
+
+					if ((int)$discount < $percent) {
+						continue;
+					}
+
+					$lastUpdate = date("Y-m-d H:i:s");
+
+					$arrResult['id_product'] = $idProduct;
+					$arrResult['name'] = $name;
+					$arrResult['linkProduct'] = $linkProduct;
+					$arrResult['imageProduct'] = $imageProduct;
+					$arrResult['originalPrice'] = $originalPrice;
+					$arrResult['price'] = $price;
+					$arrResult['discount'] = $discount;
+					$arrResult['last_update'] = $lastUpdate;
+					$arrResult['name_category'] = $categorie->id_category;
+					$arrResult['id_web'] = $idWeb;
+
+					array_push($mainResult, $arrResult);
+				}
+			}
+
+			$stt++;
+		}
+
+		category_save_db($mainResult, $arrProductId);
+	}
+	
+	curl_close($ch);
+}
+
+add_action('wpb_custom_cron_filter_tiki_by_curl', 'filter_all_category_tiki_by_curl');
 
 function get_data_voucher($data, $name) {
 	preg_match("/". $name ."=\"(.+?)\"/", $data, $output_array);
@@ -783,6 +956,60 @@ function unescapeUTF8EscapeSeq($str) {
         ), $str);
 }
 
+add_action('wpb_custom_cron_filter_shopee_by_curl', 'filter_all_category_shopee_by_curl');
+
+function filter_all_category_shopee_by_curl() {
+	ini_set('max_execution_time', '-1');
+	global $wpdb;
+	$percent = 80;
+	$numPage = 300;
+	$idWeb = 2;
+
+	$ch = curl_init();
+
+	$mainResult = [];
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$url = "https://shopee.vn/api/v1/category_list/";
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+	$data = curl_exec($ch);
+	$list_category = json_decode($data);
+
+	foreach ($list_category as $category) {
+		$category_id = $category->main->catid;
+
+		for ($i = 0; $i <= $numPage; $i += 50) {
+			$url = "https://shopee.vn/api/v2/search_items/?by=price&limit=50&match_id=" . $category_id . "&newest=" . $i . "&order=asc&page_type=search&rating_filter=1";
+			
+			curl_setopt($ch, CURLOPT_URL, $url);
+			$data = curl_exec($ch);
+			$list_item = json_decode($data);
+			$list_item = $list_item->items;
+
+			foreach ($list_item as $item) {
+				$arrResult = [];
+				$discount = $item->discount;
+				$discount = str_replace("%", "", $discount);
+
+				if (!empty($discount) && $discount >= $percent) {
+					$arrResult = get_info_item($item, $category_id, $idWeb, $discount);
+
+					array_push($mainResult, $arrResult);
+				}
+			}
+		}
+	}
+
+	category_save_db($mainResult, $arrProductId);
+}
+
 function filter_all_category_shopee() {
 	ini_set('max_execution_time', '-1');
 	global $wpdb;
@@ -830,12 +1057,9 @@ function filter_all_category_shopee() {
 					array_push($mainResult, $arrResult);
 				}
 			}
-
 		}
-		break;
-		
 	}
-	print_r($mainResult);
+
 	category_save_db($mainResult, $arrProductId);
 }
 
@@ -893,6 +1117,79 @@ function get_info_item($item, $category_id, $idWeb, $discount) {
 	$arrResult['id_web'] = $idWeb;
 
 	return $arrResult;
+}
+
+add_action( 'wpb_custom_cron_filter_sendo_by_curl', 'filter_sendo_by_curl' );
+
+function filter_sendo_by_curl() {
+	ini_set('max_execution_time', '-1');
+	global $wpdb;
+	$percent = 81;
+	$numPage = 50;
+	$idWeb = 4;
+
+	$ch = curl_init();
+
+	$mainResult = [];
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+
+	$url = "https://www.sendo.vn/m/wap_v2/category/sitemap";
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+	$data = curl_exec($ch);
+	
+	$list_category = json_decode($data);
+
+	foreach ($list_category->result->data as $category) {
+		foreach ($category->child as $category_id) {
+			$category_id = $category_id->id;
+
+			for ($i = 0; $i <= $numPage; $i++) {
+				$url = "https://www.sendo.vn/m/wap_v2/category/product?category_id=" . $category_id . "&listing_algo=algo6&p=" . $i . "&s=60&sortType=price_asc";
+
+				curl_setopt($ch, CURLOPT_URL, $url);
+
+				$data = curl_exec($ch);
+
+				$list_item = json_decode($data);
+
+				$list_item = $list_item->result->data;
+
+				foreach ($list_item as $item) {
+					$arrResult = [];
+					$discount = $item->promotion_percent;
+					$discount = str_replace("%", "", $discount);
+
+					if (!empty($discount) && $discount >= $percent) {
+						$lastUpdate = date("Y-m-d H:i:s");
+						$linkProduct = "https://sendo.vn/" . $item->cat_path;
+						$arrResult['id_product'] = $item->product_id;
+						$arrResult['name'] = $item->name;
+						$arrResult['linkProduct'] = $linkProduct;
+						$arrResult['imageProduct'] = $item->image;
+						$arrResult['originalPrice'] = $item->price;
+						$arrResult['price'] = $item->final_price;
+						$arrResult['discount'] = $discount;
+						$arrResult['last_update'] = $lastUpdate;
+						$arrResult['name_category'] = $category_id;
+						$arrResult['id_web'] = $idWeb;
+
+						array_push($mainResult, $arrResult);
+					}
+				}
+			}
+		}
+	}
+
+	curl_close($ch);
+	category_save_db($mainResult, $arrProductId);
 }
 
 add_action( 'wpb_custom_cron_filter_shopee', 'filter_all_category_shopee' );
@@ -1528,4 +1825,85 @@ function api_v1_get_category() {
 		}
 	}
 	wp_send_json($results);
+}
+
+function clear_voucher_expired() {
+	global $wpdb;
+	$results = [];
+	
+	$vouchers = $wpdb->get_results ("SELECT * FROM voucher WHERE status = 1 ORDER BY `voucher`.`updated` ASC");
+
+	if (empty($vouchers)) {
+		return;
+	}
+
+	foreach ($vouchers as $item) {
+		$time_out = $item->time_out;
+
+		if ($time_out != 'Còn hiệu lực') {
+			$time_out = str_replace(' ', '', $time_out);
+			$arr = explode("/", $time_out);
+			$time_out = $arr[1] . '/' . $arr[0] . '/' . $arr[2];
+
+			$time = strtotime($time_out);
+			$month_1 = date("m");
+			$month_2 = date("m", $time);
+			$year_1 = date("y");
+			$year_2 = date("y", $time);
+
+			if ($year_1 - $year_2 > 0 || $month_1 > $month_2) {
+				array_push($results, $item->id);
+			}
+		}
+	}
+
+	if (!empty($results)) {
+		foreach ($results as $item) {
+			$wpdb->get_results("UPDATE voucher SET status = 0 WHERE id = " . $item);
+		}
+	}
+}
+
+add_action('wpb_custom_cron_clear_voucher_expired', 'clear_voucher_expired');
+
+// def getProxy():
+//     url = "https://free-proxy-list.net"
+//     req = requests.get(url)
+
+//     root = html.fromstring(req.content)
+//     list_item = root.xpath('//*[@id="proxylisttable"]/tbody/tr')
+
+//     for item in list_item:
+//         ip = item.xpath("td[1]/text()")[0]
+//         port = item.xpath("td[2]/text()")[0]
+//         type_proxy = item.xpath("td[5]/text()")[0]
+
+//         if type_proxy == 'transparent' and check_exist_chapt('proxy', ip):
+//             save_to_file('proxy', ip)
+
+//             return str(ip) + ':' + str(port)
+
+function get_proxy() {
+	$url = "https://free-proxy-list.net";
+	$data = file_get_contents($url, false);
+
+	$doc = new DOMDocument();
+	@$doc->loadHTML('<?xml encoding="UTF-8">' . $data);
+
+	$table = $doc->getElementById('proxylisttable');
+	$tr = $table->getElementsByTagName('tr');
+	$result = [];
+	
+	foreach ($tr as $item) {
+		$td = $item->getElementsByTagName('td');
+		$ip = $td->item(0)->nodeValue;
+		$port = $td->item(1)->nodeValue;
+		$type_proxy = $td->item(4)->nodeValue;
+
+		if ($type_proxy == 'transparent') {
+			array_push($result, $ip . ':' . $port);
+		}
+	}
+
+	return $result;
 }
