@@ -759,3 +759,20 @@ a:visited {
 a:hover {
 	cursor: pointer;
 }
+
+.page-template-facebook-detail-comment table {
+	table-layout: fixed;
+    width: 100%;
+}
+
+.page-template-facebook-detail-comment th:nth-child(1), .page-template-facebook-detail-comment td:nth-child(1) {
+    width: 52px;
+}
+
+.page-template-facebook-detail-comment th:nth-child(2), .page-template-facebook-detail-comment td:nth-child(2) {
+    width: 142px;
+}
+
+.page-template-facebook-detail-comment th:nth-child(5), .page-template-facebook-detail-comment td:nth-child(5) {
+    word-break: break-all;
+}
