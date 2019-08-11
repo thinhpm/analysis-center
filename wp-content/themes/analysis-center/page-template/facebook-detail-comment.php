@@ -23,15 +23,11 @@
 		wp_redirect(home_url() . '/facebook-login');
 		exit;
 	}
-
-	// $x = 1.0000436576133E+14;
-	// print_r(is_float($x));
-	// die;
-
+	
 	global $wpdb;
 	get_header();
 	$page_id = $_GET["pageId"];
-	$datas = get_list_comment('484451281604769');
+	$datas = get_list_comment($page_id);
 ?>
 
 	<div class="main">
@@ -44,8 +40,9 @@
 				<tr>
 					<th>Stt</th>
 					<th>Tên Người Dùng</th>
-					<th>Nội Dung</th>
+					<th>Nội Dung Bình luận</th>
 					<th>Nội Dung Bài Viết</th>
+					<th>Link chia sẽ</th>
 				</tr>
 			<?php
 
@@ -56,9 +53,10 @@
 							?>
 							<tr>
 								<td><?php echo $stt ?></td>
-								<td><?php echo $item->fromid ?></td>
-								<td><?php echo $item->text ?></td>
-								<td><?php echo $item->post_id ?></td>
+								<td data-uid="<?php echo $item['fromid'] ?>"><?php echo $item['name'] ?></td>
+								<td><?php echo $item['text'] ?></td>
+								<td data-post-id="<?php echo $item['post_id'] ?>"><?php echo $item['message'] ?></td>
+								<td><?php echo $item['link'] ?></td>
 							</tr>
 
 							<?php

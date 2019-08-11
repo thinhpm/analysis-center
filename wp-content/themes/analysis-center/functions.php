@@ -1914,23 +1914,21 @@ function get_list_comment($page_id) {
 
 	$ch = curl_init();
 	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+	
 	$url = "https://graph.facebook.com/fql?q=SELECT+text,time,fromid,post_id+FROM+comment+WHERE+post_id+in+(SELECT+post_id+FROM+stream+WHERE+source_id+=+'" . $page_id . "'+AND+type+=+'80')+ORDER+BY+time+DESC&access_token=" . $access_token;
 
-	// $url = "https://graph.facebook.com/v4.0/me?access_token=" . $access_token;
+	$url = "https://graph.facebook.com/fql?q={'query1':\"SELECT+text,time,fromid,post_id+FROM+comment+WHERE+post_id+in+(SELECT+post_id+FROM+stream+WHERE+source_id+=+'". $page_id ."'+AND+type+=+'80')+ORDER+BY+time+DESC\",'query2':\"SELECT+post_id,message,attachment+FROM+stream+WHERE+post_id+in+(SELECT+post_id+FROM+stream+WHERE+source_id+=+'". $page_id ."'+AND+type+=+'80')\",'query3':\"SELECT+uid,name+FROM+user+WHERE+uid+in+(SELECT+fromid+FROM+comment+WHERE+post_id+in+(SELECT+post_id+FROM+stream+WHERE+source_id+=+'". $page_id ."'+AND+type+=+'80')+ORDER+BY+time+DESC)\"}&access_token=" . $access_token;
 
 	$arrContextOptions=array(
 	    "ssl"=>array(
 	        "verify_peer"=>false,
 	        "verify_peer_name"=>false,
 	    ),
-	);  
-
-	$opts = [
 	    "http" => [
 	        "method" => "GET",
 	        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
 	    ]
-	];
+	);  
 
 	$context = stream_context_create($arrContextOptions);
 
@@ -1938,5 +1936,56 @@ function get_list_comment($page_id) {
 
 	$list_category = json_decode($data, false, 512, JSON_BIGINT_AS_STRING);
 
-	return $list_category->data;
+	$result = handleDataComment($list_category->data);
+
+	return $result;
+}
+
+function handleDataComment($datas) {
+	$result = [];
+	$dataComment = $datas[0]->fql_result_set;
+	$dataPost = $datas[1]->fql_result_set;
+	$dataUser = $datas[2]->fql_result_set;
+	$dataPost = convertDataPost($dataPost);
+	$dataUser = convertDataUser($dataUser);
+
+	foreach ($dataComment as $item) {
+		$data = [
+			'text' => $item->text,
+			'time' => $item->time,
+			'fromid' => $item->fromid,
+			'post_id' => $item->post_id,
+			'name' => $dataUser[$item->fromid],
+			'message' => $dataPost[$item->post_id]['message'],
+			'link' => $dataPost[$item->post_id]['link']
+		];
+
+
+		array_push($result, $data);
+	}
+
+	return $result;
+}
+
+function convertDataUser($dataUser) {
+	$result = [];
+
+	foreach ($dataUser as $user) {
+		$result[$user->uid] = $user->name;
+	}
+
+	return $result;
+}
+
+function convertDataPost($dataPost) {
+	$result = [];
+
+	foreach ($dataPost as $post) {
+		$result[$post->post_id] = [
+			'message' => mb_substr($post->message,0,142, "utf-8") . '...',
+			'link' => $post->attachment->media[0]->href
+		];
+	}
+
+	return $result;
 }

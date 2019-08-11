@@ -45,7 +45,6 @@
 			<table>
 				<tr>
 					<th>Page Name</th>
-					<th>Like Count</th>
 					<th>View Detail</th>
 					<th>Action</th>
 				</tr>
@@ -56,15 +55,15 @@
 				$pages = explode(',', $pages);
 
 				if (!empty($pages)) {
-					$results = get_info_page($pages);
+					// $results = get_info_page($pages);
+					$results = $pages;
 
 					foreach ($results as $item) {
 							?>
 							<tr>
-								<td class="show-detail-page"><a href="<?php echo $item['link'] ?>" target="_blank"><?php echo $item['page_name'] ?></a></td>
-								<td><?php echo $item['likes'] ?></td>
-								<td class="show-detail-page" ><a target="_blank" " href="<?php echo home_url() ?>/facebook-comments?pageId=<?php echo $item['page_id'] ?>">Click</a></td>
-								<td><span class="btn-remove-page" data-id="<?php echo $item['page_id'] ?>">x</span></td>
+								<td class="show-detail-page"><a href="<?php echo $item['link'] ?>" target="_blank"><?php echo $item ?></a></td>
+								<td class="show-detail-page" ><a target="_blank" " href="<?php echo home_url() ?>/facebook-comments?pageId=<?php echo $item ?>">Click</a></td>
+								<td><span class="btn-remove-page" data-id="<?php echo $item ?>">x</span></td>
 							</tr>
 							<?php
 						}
