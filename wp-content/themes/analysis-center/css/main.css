@@ -801,3 +801,74 @@ a:hover {
 .table-show-detail td:nth-child(6) a {
 	color: #fff;
 }
+
+/** Account facebook page **/
+.add-account {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.add-account .dropbtn {
+	display: block;
+	background-color: #3498DB;
+	color: white;
+	padding: 16px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+	padding: 6px 10px;
+	margin-bottom: 7px;
+}
+
+.add-account .warrap {
+	position: relative;
+	display: inline-block;
+}
+
+.form-add {
+	text-align: center;
+}
+
+.form-add .input-item {
+	border: 0;
+    border-bottom: 1px solid;
+    font-size: 14px;
+    color: #333;
+    padding: 6px 6px 0px 5px;
+}
+
+.form-add .input-name {
+    margin-right: 22px;
+}
+
+.btn-item-option {
+	font-size: 16px;
+	font-weight: bold;
+	display: inline-block;
+	width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    margin: 0 4px;
+}
+
+.btn-add-item {
+	background-color: #4CAF50;
+}
+
+.btn-remove-item {
+	
+}
+
+.btn-remove-account {
+	width: 24px;
+    margin: 0 auto;
+    display: block;
+    height: 24px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}

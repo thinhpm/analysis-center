@@ -1,7 +1,3 @@
-$(document).ready(function() {       
-   // $('#myModal').modal('show');
-}); 
-
 
 $(document).ready(function() {
 	var swiper = new Swiper('.swiper-container', {
@@ -382,8 +378,6 @@ function showListPostByOrder(page_id, url_ajax) {
             console.error( 'The following error occured: ' + textStatus, errorThrown );
        	}
    });
-
-
 }
 
 function showListVideoInChannelByOrder(id_channel, key_api, order = 'date') {
@@ -677,4 +671,106 @@ function setKeyLimit(key_api, url_ajax) {
 
 
 
+// JS For add account facebook
 
+$(document).ready(function() {
+	const main_url_ajax = $('#url-ajax').val();
+
+   	addAccountFacebook(main_url_ajax);
+});
+
+function addAccountFacebook(main_url_ajax) {
+	$(document).on("click", "#form-add-account-facebook .btn-add", function() {
+		const html = `<dir class="item-account">
+			          		<label class="label-name-account">Tên Người Dùng:</label>
+			          		<input class="input-item input-name" type="text" name="name[]"/>
+			          		<label class="lable-access-token">Access Token:</label>
+			          		<input class="input-item input-token" type="text" name="token[]"/>
+			          		<span class="btn-item-option btn-add-item btn-add">+</span>
+			          		<span class="btn-item-option btn-remove-item btn-remove">-</span>
+		          		</dir>`;
+		let item_current = $(this).parent();
+
+		item_current.after(html);
+	});
+
+	$(document).on("click", "#form-add-account-facebook .btn-remove", function() {
+		let item_current = $(this).parent();
+		
+		item_current.remove();
+	});
+
+	$(document).on("click", ".btn-save-add-account", function() {
+		let input_name = $('#form-add-account-facebook input.input-name');
+		let input_tokens = $('#form-add-account-facebook input.input-token');
+		let names = getDataInput(input_name);
+		let tokens = getDataInput(input_tokens);
+		let btn_save_add = $(this);
+		
+		$.ajax({
+	       	type : "post",
+	       	dataType : "json",
+	       	url : main_url_ajax, 
+	       	data : {
+	            action: "set_account_facebook",
+	            names: names,
+	            tokens: tokens
+	       	},
+	       	beforeSend: function(){
+	       		
+	       	},
+	       	success: function(response) {
+	       		if (response.success) {
+	       			btn_save_add.attr("data-has-add", true);
+	       		}
+	       	},
+	       	error: function( jqXHR, textStatus, errorThrown ){
+	            console.error( 'The following error occured: ' + textStatus, errorThrown );
+	       	}
+	   });
+	});
+
+	$("#modal-account-facebook").on('hide.bs.modal', function() {
+	    let btn_save_add = $(this).find('.btn-save-add-account');
+
+	    if (btn_save_add.attr('data-has-add')) {
+	    	location.reload();
+	    }
+	});
+
+	$(document).on("click", ".btn-remove-account", function() {
+		var id = $(this).attr('data-id');
+		var element = $(this);
+
+		$.ajax({
+	       	type : "post",
+	       	dataType : "json",
+	       	url : main_url_ajax, 
+	       	data : {
+	            action: "remove_account_facebook",
+	            id: id
+	       	},
+	       	beforeSend: function(){
+	       		
+	       	},
+	       	success: function(response) {
+	       		if (response.success) {
+	       			element.parents('tr').hide();
+	       		}
+	       	},
+	       	error: function( jqXHR, textStatus, errorThrown ){
+	            console.log( 'The following error occured: ' + textStatus, errorThrown );
+	       	}
+	   });
+	});
+}
+
+function getDataInput(elemmet) {
+	let result = [];
+
+	elemmet.each(function() {
+		result.push(this.value);
+	});
+
+	return result.join(",");
+}
