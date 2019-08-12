@@ -1989,3 +1989,85 @@ function convertDataPost($dataPost) {
 
 	return $result;
 }
+
+add_action('wp_ajax_set_account_facebook', 'set_account_facebook');
+add_action('wp_ajax_nopriv_set_account_facebook', 'set_account_facebook');
+
+function set_account_facebook() {
+	global $wpdb;
+	$names = $_POST['names'];
+	$tokens = $_POST['tokens'];
+
+	$names = explode(',', $names);
+	$tokens = explode(',', $tokens);
+
+	for ($i=0; $i < count($names); $i++) { 
+		$results = $wpdb->get_results("INSERT INTO access_tokens (name, access_token) VALUES ('" . $names[$i] . "','" . $tokens[$i] . "')");
+	}
+
+	wp_send_json(['success' => true]);
+	die;
+}
+
+function get_list_account_facebook() {
+	global $wpdb;
+
+	$result = [];
+	$ids = $wpdb->get_results ("SELECT * FROM access_tokens ORDER BY `access_tokens`.`id` ASC");
+
+	if (!empty($ids)) {
+		$stt = 0;
+		$hasAccountActive = isHasAccountActive($ids);
+
+		if (!$hasAccountActive) {
+			setFistAccessTokenActive($ids[0]->id);
+		}
+
+		foreach ($ids as $item) {
+			$data = [
+				'id' => $item->id,
+				'name' => $item->name,
+				'access_token' => $item->access_token,
+				'active' => $stt == 0 && !$hasAccountActive ? 1 : $item->active
+			];
+
+			$stt++;
+
+			array_push($result, $data);
+		}
+		
+
+		return $result;
+	}
+
+	return [];
+}
+
+function setFistAccessTokenActive($id) {
+	global $wpdb;
+
+ 	$wpdb->get_results("UPDATE access_tokens SET `active` = 1 WHERE `id` = " . $id );
+}
+
+function isHasAccountActive($ids) {
+	foreach ($ids as $item) {
+		if ($item->active === 1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+add_action('wp_ajax_remove_account_facebook', 'remove_account_facebook');
+add_action('wp_ajax_nopriv_remove_account_facebook', 'remove_account_facebook');
+
+function remove_account_facebook() {
+	global $wpdb;
+	$id = $_POST['id'];
+
+	$wpdb->get_results("DELETE FROM `access_tokens` WHERE `id`='" . $id . "'");
+
+	wp_send_json(['success' => true]);
+	die;
+}
