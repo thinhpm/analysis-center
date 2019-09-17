@@ -20,9 +20,10 @@
 
 get_header();
 
-$isClose = !is_user_logged_in();
+// $isClose = !is_user_logged_in();
 
 global $wpdb;
+
 // get_voucher();
 
 
@@ -35,20 +36,20 @@ global $wpdb;
 					<div class="col-md-8 banner-left">
 						<div class="row">
 							<div class="col-md-6">
-								<a href="http://mgghot.com/shopee/" target="_blank">
-									<img src="http://mgghot.com/wp-content/uploads/2019/07/66286653_2451161458473659_1889960389639143424_o.jpg">
+								<a href="https://shorten.asia/eXwcJM9B" target="_blank">
+									<img src="https://vn-live-02.slatic.net/p/2e362766929dc70718d34fdde40df11f.jpg">
 								</a>
 							</div>
 							<div class="col-md-6">
-								<a href="https://shorten.asia/bceJ68BE" target="_blank">
-									<img src="https://vn-live-02.slatic.net/p/2e362766929dc70718d34fdde40df11f.jpg">
+								<a href="https://shorten.asia/Pz2Y6GtS" target="_blank">
+									<img src="https://vn-live-02.slatic.net/p/a54283ed14267bfcc240a2ea52d80428.jpg">
 								</a>
 							</div>
 						</div>
 					</div>
 					<div class="col-md-4 banner-right">
 						<div>
-							<a href="https://shorten.asia/W4V8hNBT" target="_blank"> <img src="http://mgghot.com/wp-content/uploads/2019/03/shopee-banner.png"/> </a>
+							<a href="https://shorten.asia/rXgzc6kD" target="_blank"> <img src="https://media3.scdn.vn/img3/2019/9_12/0fdNld.jpg"/> </a>
 						</div>
 						<div class="mt30">
 							<a href="https://shorten.asia/sNSbj3B4" target="_blank">
@@ -57,19 +58,19 @@ global $wpdb;
 						</div>
 					</div>
 					
-					<div class="col-md-12 mt30">
-						<a href="https://shorten.asia/CBuYAeUm" target="_blank">
-							<img src="https://salt.tikicdn.com/ts/lp/51/4f/41/7a629589b7849b86889fd6a58bbae00f.png" alt="sendo">
+				<!-- 	<div class="col-md-12 mt30">
+						<a href="https://shorten.asia/KsCPxZxJ" target="_blank">
+							<img src="https://laz-img-cdn.alicdn.com/images/ims-web/TB1YA6Efbj1gK0jSZFuXXcrHpXa.jpg_1200x1200.jpg" alt="lazada">
 						</a>
-					</div>
+					</div> -->
 					<div class="col-md-12 mt30">
-						<a href="https://shorten.asia/FdxUs5Dn" target="_blank">
-							<img src="https://salt.tikicdn.com/cache/w1348/ts/lp/30/aa/eb/71e2bef5b53b69f02183784e9c1e9644.jpg" alt="sendo">
+						<a href="https://shorten.asia/5RV6jNPC" target="_blank">
+							<img src="https://salt.tikicdn.com/ts/lp/4d/7f/43/7add44d2d422bfa9540f5eeb8e1853bb.png" alt="sendo">
 						</a>
 					</div>
 					<div class="col-md-12 mt30">
 						<a href="https://shorten.asia/bnjATUrB" target="_blank">
-							<img src="http://mgghot.com/wp-content/uploads/2018/11/f5g9k9.png" alt="sendo">
+							<img src="https://media3.scdn.vn/img3/2019/9_16/12NzEn.png" alt="sendo">
 						</a>
 					</div>
 					
@@ -410,7 +411,7 @@ global $wpdb;
 		<a href="https://shorten.asia/213KGCfx" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/7d/e3/ec/aa0db5bfdbe76ca4446a257ebdd46516.png" alt="" width="60"></a>
 	</div> -->
 	<div class="sticky-banner">
-		<a href="https://shorten.asia/PX6U3UpZ" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/84/55/14/69b05245624c51ecc8f882b72ea259cd.png" alt="" width="60"></a>
+		<a href="https://shorten.asia/5RV6jNPC" target="_blank" class="right"><img src="https://salt.tikicdn.com/ts/banner/73/67/51/29e66f1de761220712c0558cb7d536dc.png" alt="" width="60"></a>
 	</div>
 	<div class="loading">
 		<div class="wap-loader">
