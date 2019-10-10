@@ -723,11 +723,11 @@ function filter_all_category_tiki_by_curl() {
 	ini_set('max_execution_time', '-1');
 	$idWeb = '3';
 	global $wpdb;
-	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb . " AND status = 1");
 	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
 	$percent = 80;
 	$numPage = 200;
-	
+
 	$ch = curl_init();
 	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
 
@@ -817,6 +817,169 @@ function filter_all_category_tiki_by_curl() {
 }
 
 add_action('wpb_custom_cron_filter_tiki_by_curl', 'filter_all_category_tiki_by_curl');
+
+function filter_all_category_tiki_by_api() {
+	ini_set('max_execution_time', '-1');
+	$idWeb = '3';
+	global $wpdb;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb );
+	$percent = 80;
+	$numPage = 5;
+
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	foreach ($categories as $categorie) {
+		$mainResult = [];
+		$stt = 1;
+		$check = false;
+
+		while(true) {
+			if ($stt == $numPage || $check) {
+				break;
+			}
+
+			$id = $categorie->id_category;
+			$arr_s = explode('/', $id);
+			$id = str_replace('c', '', $arr_s[1]);
+
+
+			$url = 'https://tiki.vn/api/v2/landingpage/products?category_id=' . $id . '&limit=48&sort=discount_percent,desc&page=' . $stt;
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+			$data = curl_exec($ch);
+
+			$datas = json_decode($data)->data;
+			
+			foreach ($datas as $item) {
+				$arrResult = [];
+
+				$discount = $item->discount_rate;
+
+				if ((int)$discount < $percent) {
+					$check = true;
+					break;
+				}
+
+				$idProduct = $item->id;
+				$name = $item->name;
+				$linkProduct = 'https://tiki.vn/' . $item->url_key . '.html';
+				$imageProduct = $item->thumbnail_url;
+				$originalPrice = $item->list_price;
+				$price = $item->price;
+
+				$lastUpdate = date("Y-m-d H:i:s");
+
+				$arrResult['id_product'] = $idProduct;
+				$arrResult['name'] = $name;
+				$arrResult['linkProduct'] = $linkProduct;
+				$arrResult['imageProduct'] = $imageProduct;
+				$arrResult['originalPrice'] = $originalPrice;
+				$arrResult['price'] = $price;
+				$arrResult['discount'] = $discount;
+				$arrResult['last_update'] = $lastUpdate;
+				$arrResult['name_category'] = $categorie->id_category;
+				$arrResult['id_web'] = $idWeb;
+
+				array_push($mainResult, $arrResult);
+			}
+
+			$stt++;
+		}
+
+		category_save_db($mainResult, $arrProductId);
+	}
+	
+	curl_close($ch);
+}
+
+function filter_tiki_for_lan_ml() {
+	ini_set('max_execution_time', '-1');
+	$idWeb = '3';
+	global $wpdb;
+	$categories = $wpdb->get_results ("SELECT * FROM categories WHERE id_web=" . $idWeb);
+	$percent = 80;
+	$numPage = 5;
+
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	foreach ($categories as $categorie) {
+		$mainResult = [];
+		$stt = 1;
+		$check = false;
+
+		while(true) {
+			if ($stt == $numPage || $check) {
+				break;
+			}
+
+			$id = $categorie->id_category;
+			$arr_s = explode('/', $id);
+			$id = str_replace('c', '', $arr_s[1]);
+
+
+			$url = 'https://tiki.vn/api/v2/landingpage/products?category_id=' . $id . '&limit=48&sort=discount_percent,desc&page=' . $stt;
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+			$data = curl_exec($ch);
+
+			$datas = json_decode($data)->data;
+			
+			foreach ($datas as $item) {
+				$arrResult = [];
+
+				$discount = $item->discount_rate;
+
+				if ((int)$discount < $percent) {
+					$check = true;
+					break;
+				}
+
+				$idProduct = $item->id;
+				$name = $item->name;
+				$linkProduct = 'https://tiki.vn/' . $item->url_key . '.html';
+				$imageProduct = $item->thumbnail_url;
+				$originalPrice = $item->list_price;
+				$price = $item->price;
+
+				$lastUpdate = date("Y-m-d H:i:s");
+
+				$arrResult['id_product'] = $idProduct;
+				$arrResult['name'] = $name;
+				$arrResult['linkProduct'] = $linkProduct;
+				$arrResult['imageProduct'] = $imageProduct;
+				$arrResult['originalPrice'] = $originalPrice;
+				$arrResult['price'] = $price;
+				$arrResult['discount'] = $discount;
+				$arrResult['last_update'] = $lastUpdate;
+				$arrResult['name_category'] = $categorie->id_category;
+				$arrResult['id_web'] = $idWeb;
+
+				array_push($mainResult, $arrResult);
+			}
+
+			$stt++;
+		}
+	}
+	
+	curl_close($ch);
+
+	return $mainResult;
+}
+
+add_action('wpb_custom_cron_filter_tiki_by_api', 'filter_all_category_tiki_by_api');
 
 function get_data_voucher($data, $name) {
 	preg_match("/". $name ."=\"(.+?)\"/", $data, $output_array);
