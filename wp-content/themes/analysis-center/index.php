@@ -23,7 +23,6 @@ get_header();
 // $isClose = !is_user_logged_in();
 
 global $wpdb;
-// get_voucher();
 
 
 ?>
