@@ -1022,6 +1022,73 @@ function get_voucher() {
 	}
 }
 
+
+add_action('wpb_custom_cron_get_voucher_mgg_vn', 'get_voucher_mgg_vn');
+
+function get_voucher_mgg_vn() {
+	global $wpdb;
+	$totalPage = 10;
+
+	ini_set('max_execution_time', -1);
+
+	$arr_website = [
+		'lazada' => 'https://mgg.vn/ma-giam-gia/lazada/',
+		'shopee' => 'https://mgg.vn/ma-giam-gia/shopee/',
+		'tiki' => 'https://mgg.vn/ma-giam-gia/tiki-vn/',
+		'sendo' => 'https://mgg.vn/ma-giam-gia/sendo/'
+	];
+
+	$listCode = $wpdb->get_results("SELECT code FROM voucher");
+	$listCodeCurrent = [];
+
+	foreach ($listCode as $key => $value) {
+		$listCodeCurrent[$value->code] = '';
+	}
+
+	foreach ($arr_website as $name_web => $link_web) {
+
+		for ($numpage = $totalPage; $numpage > 0; $numpage--) {
+			$link = $link_web . "page/" . $numpage . "/?coupon_type=code";
+
+			$data = @file_get_contents($link);
+
+			$doc = new DOMDocument();
+
+			@$doc->loadHTML('<?xml encoding="UTF-8">' . $data);
+
+			$xpath = new \DOMXpath($doc);
+	  		$listItem = $xpath->query('//div[@class="coupon-item bn-cp has-thumb store-listing-item c-type-code coupon-listing-item shadow-box coupon-live"]');
+
+			if ($listItem->length > 0) {
+				foreach ($listItem as $item) {
+					$tagA = $item->getElementsByTagName("a");
+					$title_type = $tagA[0]->getAttribute("data-type");
+
+					if($title_type == 'code') {
+						$tagDiv = $item->getElementsByTagName("div");
+
+						$time_out = $tagDiv[5]->textContent;
+						$percent = $tagDiv[1]->textContent;
+
+						if($time_out != 'Đã hết hạn' && $time_out != '') {
+							$title = $tagA[0]->getAttribute("title");
+							$data_code = $tagA[0]->getAttribute("data-code");
+
+							if (isset($listCodeCurrent[$data_code])) {
+								continue;
+							}
+
+							$results = $wpdb->get_results("INSERT INTO voucher (code, percent, type, name, description, time_out, website) VALUES ('". $data_code ."', '" . $percent . "', 'code', '". $title ."', '". $title ."','". $time_out ."', '". $name_web ."')");	
+						}
+					}
+				}
+
+				break;
+			}
+		}
+	}
+}
+
 add_action('wp_ajax_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
 add_action('wp_ajax_nopriv_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
 
@@ -2029,22 +2096,116 @@ function clear_voucher_expired() {
 
 add_action('wpb_custom_cron_clear_voucher_expired', 'clear_voucher_expired');
 
-// def getProxy():
-//     url = "https://free-proxy-list.net"
-//     req = requests.get(url)
 
-//     root = html.fromstring(req.content)
-//     list_item = root.xpath('//*[@id="proxylisttable"]/tbody/tr')
+function getLatestVouchers($limit = 5)
+{
+	global $wpdb;
 
-//     for item in list_item:
-//         ip = item.xpath("td[1]/text()")[0]
-//         port = item.xpath("td[2]/text()")[0]
-//         type_proxy = item.xpath("td[5]/text()")[0]
+	$results = [];
+	$listWebId = [
+		0 => [
+			'id' => 'lazada',
+			'name' => 'lazada'
+		],
+		1 => [
+			'id' => 'shopee',
+			'name' =>'shopee'
+		],
+		2 => [
+			'id' => 'tiki',
+			'name' => 'tiki'
+		],
+		3 => [
+			'id' => 'sendo',
+			'name' => 'sendo'
+		],
+	];
 
-//         if type_proxy == 'transparent' and check_exist_chapt('proxy', ip):
-//             save_to_file('proxy', ip)
+	foreach ($listWebId as $item) {
+		$sql = "SELECT code, percent, name, time_out FROM voucher WHERE website='" . $item['id'] . "' ORDER BY id DESC LIMIT ". (int)$limit;
 
-//             return str(ip) + ':' + str(port)
+		$voucher = $wpdb->get_results($sql);
+		$results[$item['id']] = $voucher;
+	}
+
+	return $results;
+}
+
+function getTextVoucher($datas)
+{
+	if (count($datas) == 0) {
+		return '';
+	}
+
+	$text = "Bản Tin Mã Giảm Giá Hôm Nay:\n";
+
+	foreach ($datas as $key => $item) {
+		$text .= "*Mã giảm giá " . $key . ":\n";
+
+		foreach ($item as $value) {
+			$text .= "\t\r- " . $value->code . " (" . $value->name . ", " . $value->time_out . ")\n";
+		}
+
+		$text .= "\n";
+	}
+
+	$text .= "\nTruy cập mgghot.com để xem nhiều mã giảm giá hơn!!!";
+
+	return $text;
+}
+
+function myCurlToFacebook($method, $url, $params, $cookie)
+{
+    $http = [
+        "method" => $method,
+        "header" => "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36\r\nReferrer:https://facebook.com\r\n" . "Cookie: " . $cookie,
+    ];
+
+    if ($method == 'POST') {
+        $postData = http_build_query($params);
+
+        $http = [
+            "method" => $method,
+            "header" => "Content-Type: application/x-www-form-urlencoded\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36\r\nReferrer:https://facebook.com\r\n" . "Cookie: " . $cookie,
+            "content" => $postData,
+        ];
+    }
+
+    $arrContextOptions = array(
+        "ssl" => array(
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        ),
+        "http" => $http,
+    );
+
+    $context = stream_context_create($arrContextOptions);
+
+    $data = @file_get_contents($url, false, $context);
+
+    if ($data === FALSE) {
+        return false;
+    }
+
+    return $data;
+}
+
+function update_voucher_to_facebook()
+{
+	$datas = getLatestVouchers();
+	$text = getTextVoucher($datas);
+
+	$cookie = "_fbp=fb.1.1572409905117.621420004; datr=MBK5XUjfsRpEFacFd65T9knl; sb=TjS5XdnWGZne3IAHOWSmesjk; c_user=100004365761329; xs=24%3A2klaUeIDzTvlmQ%3A2%3A1573797862%3A17632%3A6247; spin=r.1001463097_b.trunk_t.1574388539_s.1_v.2_; fr=1dC7zg68deoFkZvUI.AWWQgLXSMYbMRjY-_Bxvwz0YUhU.BduTRO.4j.F3U.0.0.Bd15XJ.AWWH_zQO; act=1574411038729%2F4; wd=1848x446; presence=EDvF3EtimeF1574411467EuserFA21B04365761329A2EstateFDsb2F1574409485118EatF1574410017559Et3F_5bDiFA2user_3a1B04365761329A2EoF1EfF1C_5dEutc3F1574410017572G574411467231CEchFDp_5f1B04365761329F1CC";
+
+	$access_token = "EAABwzLixnjYBAPCNQwv9efgc1ivtjd2bmTIF9RKfji8JCMw64a0oM82ZBX1zvpSoPsVzLjN6TINjNZAirJCUcx5kSNa8srsgCFUQuKddZBgt20K58rAeoC9ZBKDIOMqcRn6NZCv061kZCFCC79lj4SkTcvRtLrWbmduRzZCq06mVAZDZD";
+
+	$results = myCurlToFacebook("POST", "https://graph.facebook.com/v5.0/me/feed", ["message" => $text, "access_token" => $access_token], $cookie);
+	
+	return true;
+}
+
+
+add_action('wpb_custom_cron_update_voucher_to_facebook', 'update_voucher_to_facebook');
 
 function get_proxy() {
 	$url = "https://free-proxy-list.net";

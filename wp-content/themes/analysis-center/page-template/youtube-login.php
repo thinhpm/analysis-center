@@ -18,6 +18,8 @@
  *
  * @package ict
  */
+	filter_sendo_by_curl();
+	die;
 	get_header();
 ?>
 <div class="container">
