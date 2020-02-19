@@ -17,7 +17,7 @@
  *
  * @package Analysis_Center
  */
-
+api_v1_lazada_set_db();
 get_header();
 
 // $isClose = !is_user_logged_in();
