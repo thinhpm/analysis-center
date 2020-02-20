@@ -606,7 +606,7 @@ function category_save_db_api($value, $arrProduct) {
 	if (empty($value)) {
 		return;
 	}
-	
+
 	$lastUpdate = date("Y-m-d H:i:s");
 	$arrProductId = [];
 
@@ -623,13 +623,13 @@ function category_save_db_api($value, $arrProduct) {
 
 	if (array_key_exists($value['id_product'], $arrProductId)) {
 		if ($is_error_price && !$arrProductId[$value['id_product']]['is_error_price']) {
-			update_voucher_to_facebook();
+			updateErrorProductToFacebook($value);
 		}
 
 		$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['original_price'] .", price = ". $value['price'] .", percent = ". $value['percent'] .", last_update = '". $lastUpdate . "', is_error_price='" . $is_error_price . "' WHERE id_product = ". $value['id_product'] . "");
 	} else {
 		if ($is_error_price) {
-			update_voucher_to_facebook();
+			updateErrorProductToFacebook($value);
 		}
 
 		$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, is_error_price, id_web) VALUES (". $value['id_product'] .", '". $value['name_product'] . "', '". $value['link_product'] ."', '". $value['image_product'] ."', ". $value['original_price'] .",". $value['price'] .", ". $value['percent'] .", '". $value['name_category'] . "', " . $is_error_price . ",". $value['id_web'] .")");
@@ -2210,11 +2210,11 @@ function myCurlToFacebook($method, $url, $params, $cookie)
     return $data;
 }
 
-function update_post_on_facebook($access_token, $content)
+function update_post_on_facebook($access_token, $content, $link = "")
 {
 	$url = "https://graph.facebook.com/v5.0/me/feed";
 
-	$results = myCurlToFacebook("POST", "https://graph.facebook.com/v5.0/me/feed", ["message" => $content, "access_token" => $access_token], $cookie);
+	$results = myCurlToFacebook("POST", "https://graph.facebook.com/v5.0/me/feed", ["message" => $content, "link" => $link, "access_token" => $access_token], $cookie);
 
 	return $results;
 }
@@ -2229,6 +2229,25 @@ function update_voucher_to_facebook()
 
 	update_post_on_facebook($access_token, $text);	
 	
+	return true;
+}
+
+function updateErrorProductToFacebook($data)
+{
+	$access_token = "EAAGNO4a7r2wBAP7bw29MOCMdcJfovkV6Xc3Ms59cCeUCqrWSyb4H34JAH3NCFxEPPKcqg682HXcjWrhX9AGGx10J466ZClUVrykrZAx7udcT3uz9BUjSo9wiP9xYWM8uHhGZA4BTkeIXKbf03DwHGGogNhTN5J40rOEZAUkZA1AZDZD";
+
+	$html = "";
+
+	$html .= "HOT HOT HOT!!! Deal giảm sâu nè bà con\n\n";
+	$html .= $data['name_product'] . "\n";
+	$html .= "Giá trước: " . $data['original_price'] . " đ\n";
+	$html .= "Giá đã giảm: " . $data['price'] . " đ\n";
+	$html .= "\nXem thêm các sản phẩm khác tại mgghot.com";
+
+	$link = "https://go.isclix.com/deep_link/4945784097639239041?url=" . $data['link_product'];
+
+	update_post_on_facebook($access_token, $html, $link);
+
 	return true;
 }
 
