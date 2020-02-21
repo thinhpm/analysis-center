@@ -1060,7 +1060,6 @@ function get_voucher_mgg_vn() {
 	}
 
 	foreach ($arr_website as $name_web => $link_web) {
-
 		for ($numpage = $totalPage; $numpage > 0; $numpage--) {
 			$link = $link_web . "page/" . $numpage . "/?coupon_type=code";
 
@@ -1101,6 +1100,8 @@ function get_voucher_mgg_vn() {
 			}
 		}
 	}
+
+	update_voucher_to_facebook();
 }
 
 add_action('wp_ajax_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
@@ -2081,7 +2082,7 @@ function clear_voucher_expired() {
 	global $wpdb;
 	$results = [];
 	
-	$vouchers = $wpdb->get_results ("SELECT * FROM voucher WHERE status = 1 ORDER BY `voucher`.`updated` ASC");
+	$vouchers = $wpdb->get_results ("SELECT * FROM voucher WHERE status = 1 ORDER BY `voucher`.`id` ASC");
 
 	if (empty($vouchers)) {
 		return;
@@ -2277,4 +2278,72 @@ function get_proxy() {
 	}
 
 	return $result;
+}
+
+function filterDealHotTiki()
+{
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	$mainResult = [];
+	$stt = 1;
+	$check = false;
+	$percent = 70;
+
+	while(true) {
+		if ($stt > 10) {
+			break;
+		}
+
+		$url = "https://tiki.vn/api/v2/events/deals/?category_ids=&type=now&page=" . $stt . "&per_page=20";
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+		$data = curl_exec($ch);
+
+		$datas = json_decode($data)->data;
+
+		if (count($datas) == 0 ) {
+			break;
+		}
+		
+		foreach ($datas as $item) {
+			$arrResult = [];
+
+			$discount = $item->discount_percent;
+
+			if ((int)$discount < $percent) {
+				continue;
+			}
+
+			$product = $item->product;
+			$name = $item->name;
+
+			$linkProduct = "https://tiki.vn/product/" . $item->id;
+			$imageProduct = $item->thumbnail_url;
+			$originalPrice = $item->list_price;
+			$price = $item->price;
+			$fromDate = $item->from_date;
+
+			$arrResult['name'] = $name;
+			$arrResult['linkProduct'] = $linkProduct;
+			$arrResult['imageProduct'] = $imageProduct;
+			$arrResult['originalPrice'] = $originalPrice;
+			$arrResult['price'] = $price;
+			$arrResult['discount'] = $discount;
+			$arrResult['fromDate'] = $fromDate;
+
+			array_push($mainResult, $arrResult);
+		}
+
+		$stt++;
+	}
+
+	curl_close($ch);
+
+	print_r($mainResult);
 }
