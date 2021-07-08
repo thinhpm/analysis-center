@@ -600,25 +600,39 @@ function category_save_db($arrayData, $arrProductId) {
 	return;
 }
 
-function category_save_db_api($value, $arrProductId) {
+function category_save_db_api($value, $arrProduct) {
 	global $wpdb;
 
 	if (empty($value)) {
 		return;
 	}
-	$lastUpdate = date("Y-m-d H:i:s");
 
-	foreach ($arrProductId as $key => $value2) {
-		$arrProductId[$key] = $value2->id_product;
+	$lastUpdate = date("Y-m-d H:i:s");
+	$arrProductId = [];
+
+	foreach ($arrProduct as $key => $value2) {
+		$arrProductId[$value2->id_product] = [
+			'product_id' => $value2->id_product,
+			'is_error_price' => $value2->is_error_price
+		];
 	}
 
 	$value['price'] = trim((int)($value['price']));
 	$value['original_price'] = trim((int)($value['original_price']));
+	$is_error_price = $value['is_error_price'];
 
-	if (in_array($value['id_product'], $arrProductId)) {
-		$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['original_price'] .", price = ". $value['price'] .", percent = ". $value['percent'] .", last_update = '". $lastUpdate . "' WHERE id_product = ". $value['id_product'] . "");
+	if (array_key_exists($value['id_product'], $arrProductId)) {
+		if ($is_error_price && !$arrProductId[$value['id_product']]['is_error_price']) {
+			updateErrorProductToFacebook($value);
+		}
+
+		$results = $wpdb->get_results ( "UPDATE products SET original_price = ". $value['original_price'] .", price = ". $value['price'] .", percent = ". $value['percent'] .", last_update = '". $lastUpdate . "', is_error_price='" . $is_error_price . "' WHERE id_product = ". $value['id_product'] . "");
 	} else {
-		$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, id_web) VALUES (". $value['id_product'] .", '". $value['name_product'] . "', '". $value['link_product'] ."', '". $value['image_product'] ."', ". $value['original_price'] .",". $value['price'] .", ". $value['percent'] .", '". $value['name_category'] . "',". $value['id_web'] .")");
+		if ($is_error_price) {
+			updateErrorProductToFacebook($value);
+		}
+
+		$results = $wpdb->get_results("INSERT INTO products (id_product, name_product, link_product, image_product, original_price, price, percent, name_category, is_error_price, id_web) VALUES (". $value['id_product'] .", '". $value['name_product'] . "', '". $value['link_product'] ."', '". $value['image_product'] ."', ". $value['original_price'] .",". $value['price'] .", ". $value['percent'] .", '". $value['name_category'] . "', " . $is_error_price . ",". $value['id_web'] .")");
 	
 	}
 
@@ -1046,7 +1060,6 @@ function get_voucher_mgg_vn() {
 	}
 
 	foreach ($arr_website as $name_web => $link_web) {
-
 		for ($numpage = $totalPage; $numpage > 0; $numpage--) {
 			$link = $link_web . "page/" . $numpage . "/?coupon_type=code";
 
@@ -1087,6 +1100,8 @@ function get_voucher_mgg_vn() {
 			}
 		}
 	}
+
+	update_voucher_to_facebook();
 }
 
 add_action('wp_ajax_api_v1_lazada_get_db', 'api_v1_lazada_get_db');
@@ -1108,7 +1123,7 @@ function api_v1_lazada_set_db() {
 	global $wpdb;
 	$idWeb = $_GET['id_web'];
 
-	$arrProductId = $wpdb->get_results( "SELECT id_product FROM products WHERE id_web=" . $idWeb);
+	$arrProductId = $wpdb->get_results( "SELECT id_product, is_error_price FROM products WHERE id_web=" . $idWeb);
 	$arrayData = [];
 
     $arrayData['id_product'] = $_GET['id_product'];
@@ -1120,6 +1135,12 @@ function api_v1_lazada_set_db() {
     $arrayData['percent'] = $_GET['percent'];
     $arrayData['name_category'] = $_GET['name_category'];
     $arrayData['id_web'] = $_GET['id_web'];
+
+    if (!isset($_GET['id_web'])) {
+    	$arrayData['is_error_price'] = 0;
+    } else {
+    	$arrayData['is_error_price'] = $_GET['is_error_price'];
+    }
 
 	category_save_db_api($arrayData, $arrProductId);
 
@@ -2061,7 +2082,7 @@ function clear_voucher_expired() {
 	global $wpdb;
 	$results = [];
 	
-	$vouchers = $wpdb->get_results ("SELECT * FROM voucher WHERE status = 1 ORDER BY `voucher`.`updated` ASC");
+	$vouchers = $wpdb->get_results ("SELECT * FROM voucher WHERE status = 1 ORDER BY `voucher`.`id` ASC");
 
 	if (empty($vouchers)) {
 		return;
@@ -2190,17 +2211,44 @@ function myCurlToFacebook($method, $url, $params, $cookie)
     return $data;
 }
 
+function update_post_on_facebook($access_token, $content, $link = "")
+{
+	$url = "https://graph.facebook.com/v5.0/me/feed";
+
+	$results = myCurlToFacebook("POST", "https://graph.facebook.com/v5.0/me/feed", ["message" => $content, "link" => $link, "access_token" => $access_token], $cookie);
+
+	return $results;
+}
+
 function update_voucher_to_facebook()
 {
 	$datas = getLatestVouchers();
 	$text = getTextVoucher($datas);
 
-	$cookie = "_fbp=fb.1.1572409905117.621420004; datr=MBK5XUjfsRpEFacFd65T9knl; sb=TjS5XdnWGZne3IAHOWSmesjk; c_user=100004365761329; xs=24%3A2klaUeIDzTvlmQ%3A2%3A1573797862%3A17632%3A6247; spin=r.1001463097_b.trunk_t.1574388539_s.1_v.2_; fr=1dC7zg68deoFkZvUI.AWWQgLXSMYbMRjY-_Bxvwz0YUhU.BduTRO.4j.F3U.0.0.Bd15XJ.AWWH_zQO; act=1574411038729%2F4; wd=1848x446; presence=EDvF3EtimeF1574411467EuserFA21B04365761329A2EstateFDsb2F1574409485118EatF1574410017559Et3F_5bDiFA2user_3a1B04365761329A2EoF1EfF1C_5dEutc3F1574410017572G574411467231CEchFDp_5f1B04365761329F1CC";
 
-	$access_token = "EAABwzLixnjYBAPCNQwv9efgc1ivtjd2bmTIF9RKfji8JCMw64a0oM82ZBX1zvpSoPsVzLjN6TINjNZAirJCUcx5kSNa8srsgCFUQuKddZBgt20K58rAeoC9ZBKDIOMqcRn6NZCv061kZCFCC79lj4SkTcvRtLrWbmduRzZCq06mVAZDZD";
+	$access_token = "EAAGNO4a7r2wBAP7bw29MOCMdcJfovkV6Xc3Ms59cCeUCqrWSyb4H34JAH3NCFxEPPKcqg682HXcjWrhX9AGGx10J466ZClUVrykrZAx7udcT3uz9BUjSo9wiP9xYWM8uHhGZA4BTkeIXKbf03DwHGGogNhTN5J40rOEZAUkZA1AZDZD";
 
-	$results = myCurlToFacebook("POST", "https://graph.facebook.com/v5.0/me/feed", ["message" => $text, "access_token" => $access_token], $cookie);
+	update_post_on_facebook($access_token, $text);	
 	
+	return true;
+}
+
+function updateErrorProductToFacebook($data)
+{
+	$access_token = "EAAGNO4a7r2wBAP7bw29MOCMdcJfovkV6Xc3Ms59cCeUCqrWSyb4H34JAH3NCFxEPPKcqg682HXcjWrhX9AGGx10J466ZClUVrykrZAx7udcT3uz9BUjSo9wiP9xYWM8uHhGZA4BTkeIXKbf03DwHGGogNhTN5J40rOEZAUkZA1AZDZD";
+
+	$html = "";
+
+	$html .= "HOT HOT HOT!!! Deal giảm sâu nè bà con\n\n";
+	$html .= $data['name_product'] . "\n";
+	$html .= "Giá trước: " . $data['original_price'] . " đ\n";
+	$html .= "Giá đã giảm: " . $data['price'] . " đ\n";
+	$html .= "\nXem thêm các sản phẩm khác tại mgghot.com";
+
+	$link = "https://go.isclix.com/deep_link/4945784097639239041?url=" . $data['link_product'];
+
+	update_post_on_facebook($access_token, $html, $link);
+
 	return true;
 }
 
@@ -2230,4 +2278,72 @@ function get_proxy() {
 	}
 
 	return $result;
+}
+
+function filterDealHotTiki()
+{
+	$ch = curl_init();
+	$user_agent = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36";
+
+	$mainResult = [];
+	$stt = 1;
+	$check = false;
+	$percent = 70;
+
+	while(true) {
+		if ($stt > 10) {
+			break;
+		}
+
+		$url = "https://tiki.vn/api/v2/events/deals/?category_ids=&type=now&page=" . $stt . "&per_page=20";
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
+
+		$data = curl_exec($ch);
+
+		$datas = json_decode($data)->data;
+
+		if (count($datas) == 0 ) {
+			break;
+		}
+		
+		foreach ($datas as $item) {
+			$arrResult = [];
+
+			$discount = $item->discount_percent;
+
+			if ((int)$discount < $percent) {
+				continue;
+			}
+
+			$product = $item->product;
+			$name = $item->name;
+
+			$linkProduct = "https://tiki.vn/product/" . $item->id;
+			$imageProduct = $item->thumbnail_url;
+			$originalPrice = $item->list_price;
+			$price = $item->price;
+			$fromDate = $item->from_date;
+
+			$arrResult['name'] = $name;
+			$arrResult['linkProduct'] = $linkProduct;
+			$arrResult['imageProduct'] = $imageProduct;
+			$arrResult['originalPrice'] = $originalPrice;
+			$arrResult['price'] = $price;
+			$arrResult['discount'] = $discount;
+			$arrResult['fromDate'] = $fromDate;
+
+			array_push($mainResult, $arrResult);
+		}
+
+		$stt++;
+	}
+
+	curl_close($ch);
+
+	print_r($mainResult);
 }
